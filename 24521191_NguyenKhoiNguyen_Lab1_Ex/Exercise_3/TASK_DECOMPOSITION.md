@@ -36,6 +36,7 @@ The implementation must keep the four states mutually exclusive. Do not request 
 - Add the successful non-empty state.
 - Lay out metadata badges with Flexbox and the record list with CSS Grid.
 - Keep state selection separate from presentation and reject invalid records.
+- Use the instructor-approved local demo fixture; label the records as demonstration data, not live supplier inventory.
 - Commit this state independently before starting T-03C.
 
 ### T-03C: Empty and Error States
@@ -47,7 +48,7 @@ The implementation must keep the four states mutually exclusive. Do not request 
 
 ## Data Source Decision
 
-No API endpoint or authoritative data source was supplied with the Exercise 3 requirements. T-03A must therefore remain a presentation-only Loading skeleton. Before T-03B, select and document an approved endpoint or fixture strategy; do not claim mock/static records are live data.
+No API endpoint or authoritative data source was supplied with the Exercise 3 requirements. The student approved a local demo fixture for this homework. T-03A remains presentation-only Loading; T-03B uses clearly labeled sample records and does not claim to connect to a live supplier API.
 
 ## Acceptance Checklist
 

@@ -6,6 +6,8 @@
     <meta name="theme-color" content="#101722">
     <title>Aircraft Parts Availability | Exercise 3</title>
     <link rel="stylesheet" href="./skeleton.css">
+    <script src="./parts-demo-data.js" defer></script>
+    <script src="./parts.js" defer></script>
 </head>
 <body>
     <header class="page-header">
@@ -15,7 +17,7 @@
     </header>
 
     <main id="main-content">
-        <section class="availability" aria-labelledby="availability-title" aria-busy="true">
+        <section class="availability" aria-labelledby="availability-title" aria-busy="true" data-state="loading">
             <header class="availability-header">
                 <section>
                     <p class="eyebrow">Parts directory</p>
@@ -44,6 +46,15 @@
                     <span class="skeleton-item skeleton-line skeleton-line-short"></span>
                 </li>
             </ul>
+
+            <section id="live-data" class="live-data" aria-labelledby="results-title" hidden>
+                <header class="results-header">
+                    <h3 id="results-title">Demonstration inventory</h3>
+                    <p class="demo-notice">Sample records for the homework demo; not live supplier inventory.</p>
+                </header>
+                <ul id="metadata-badges" class="metadata-badges" aria-label="Inventory summary"></ul>
+                <ul id="parts-list" class="parts-grid" aria-label="Demonstration aircraft parts"></ul>
+            </section>
         </section>
     </main>
 </body>
