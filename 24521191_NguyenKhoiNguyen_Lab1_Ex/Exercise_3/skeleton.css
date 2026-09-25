@@ -100,6 +100,49 @@ h2 {
     display: none;
 }
 
+.state-message[hidden] {
+    display: none;
+}
+
+.state-message {
+    padding: 1.25rem;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+}
+
+.state-message h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.1rem;
+}
+
+.state-message p {
+    margin: 0;
+    color: var(--color-text-muted);
+}
+
+.error-message {
+    border-left: 4px solid hsl(6 78% 62%);
+}
+
+.retry-button {
+    min-height: 2.75rem;
+    margin-top: 1rem;
+    padding: 0.55rem 0.9rem;
+    color: var(--color-background);
+    background-color: var(--color-accent);
+    border: 0;
+    border-radius: 0.3rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.retry-button:focus-visible {
+    outline: 3px solid var(--color-text);
+    outline-offset: 3px;
+}
+
 .results-header {
     display: flex;
     flex-wrap: wrap;

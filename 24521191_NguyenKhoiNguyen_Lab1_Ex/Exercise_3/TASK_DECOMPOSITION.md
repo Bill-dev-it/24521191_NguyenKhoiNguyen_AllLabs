@@ -44,6 +44,7 @@ The implementation must keep the four states mutually exclusive. Do not request 
 - Add the successful empty state and the request/parse error state.
 - Implement accessible Retry, transitioning back to Loading.
 - Ensure stale requests cannot overwrite a newer retry.
+- For the approved demo fixture, `?demo=empty` selects Empty and `?demo=error` simulates a request failure; Retry repeats the selected scenario.
 - Commit these states independently as the final state task.
 
 ## Data Source Decision

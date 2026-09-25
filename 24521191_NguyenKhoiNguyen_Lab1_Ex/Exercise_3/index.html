@@ -55,6 +55,17 @@
                 <ul id="metadata-badges" class="metadata-badges" aria-label="Inventory summary"></ul>
                 <ul id="parts-list" class="parts-grid" aria-label="Demonstration aircraft parts"></ul>
             </section>
+
+            <section id="empty-state" class="state-message" role="status" aria-labelledby="empty-title" hidden>
+                <h3 id="empty-title">No parts found</h3>
+                <p>The demo inventory currently has no matching aircraft parts.</p>
+            </section>
+
+            <section id="error-state" class="state-message error-message" aria-labelledby="error-title" hidden>
+                <h3 id="error-title">Parts could not be loaded</h3>
+                <p id="error-message" role="alert">The demonstration inventory is temporarily unavailable.</p>
+                <button id="retry-button" class="retry-button" type="button">Retry</button>
+            </section>
         </section>
     </main>
 </body>
