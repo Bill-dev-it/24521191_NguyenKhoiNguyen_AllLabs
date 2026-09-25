@@ -33,3 +33,24 @@ if (themeToggle && themeIcon && themeLabel) {
         } catch {}
     });
 }
+
+const contactForm = document.querySelector("#contact-form");
+const formStatus = document.querySelector("#form-status");
+
+if (contactForm instanceof HTMLFormElement && formStatus) {
+    contactForm.dataset.state = "idle";
+
+    contactForm.addEventListener("input", () => {
+        contactForm.dataset.state = "editing";
+        formStatus.textContent = "";
+    });
+
+    contactForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        contactForm.dataset.state = "validated";
+
+        const formData = new FormData(contactForm);
+        const name = String(formData.get("name") ?? "there").trim();
+        formStatus.textContent = `Thanks, ${name}. Your message passed local validation; it has not been sent.`;
+    });
+}
