@@ -1,0 +1,37 @@
+:root {
+    --color-background: hsl(222 24% 8%);
+    --color-surface: hsl(222 23% 13%);
+    --color-text: hsl(210 20% 98%);
+    --color-text-muted: hsl(215 18% 82%);
+    --color-accent: hsl(195 90% 55%);
+    --color-border: hsl(218 20% 30%);
+    --color-focus: hsl(44 100% 65%);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    min-width: 320px;
+}
+
+body {
+    margin: 0;
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+img,
+svg {
+    max-width: 100%;
+}
