@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Web Development Workshop</title>
+</head>
+
+<body>
+    <header>
+        <h1>Web Development Workshop</h1>
+        <p>
+            Join our upcoming workshop and
+            strengthen your web development skills.
+        </p>
+    </header>
+
+    <main>
+        <section
+            id="countdown"
+            aria-labelledby="countdown-title"
+            data-deadline="2026-12-01T09:00:00Z"
+        >
+            <h2 id="countdown-title">
+                Event Countdown
+            </h2>
+
+            <p>
+                Time remaining until the workshop begins:
+            </p>
+
+            <div class="countdown-display"
+                 role="timer"
+                 aria-label="Time remaining">
+                <div>
+                    <strong id="days">00</strong>
+                    <span>Days</span>
+                </div>
+
+                <div>
+                    <strong id="hours">00</strong>
+                    <span>Hours</span>
+                </div>
+
+                <div>
+                    <strong id="minutes">00</strong>
+                    <span>Minutes</span>
+                </div>
+
+                <div>
+                    <strong id="seconds">00</strong>
+                    <span>Seconds</span>
+                </div>
+            </div>
+
+            <p id="countdown-status"
+               aria-live="polite">
+                Countdown not started
+            </p>
+        </section>
+    </main>
+</body>
+</html>
