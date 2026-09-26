@@ -1,7 +1,8 @@
 
 /*
- * HW3 — Slice 2B: Registration Form State Machine
- * Simulated submission; no backend connection yet.
+ * HW3 — Slice 3: Safe Registration Form
+ * State machine, duplicate-submit prevention,
+ * input validation and safe DOM rendering.
  */
 
 const form = document.querySelector("#registration-form");
@@ -20,8 +21,8 @@ const FormState = Object.freeze({
 });
 
 let currentState = FormState.IDLE;
+let submissionInProgress = false;
 
-// Centralize all UI updates in one state transition function.
 function setFormState(nextState, message = "") {
     currentState = nextState;
 
@@ -32,41 +33,60 @@ function setFormState(nextState, message = "") {
             : "Register";
 
     formStatus.dataset.state = nextState;
+
+    // Safe rendering: never interpret user input as HTML.
     formStatus.textContent = message;
 }
 
-function validateForm() {
-    let valid = true;
+function normalizeInput(value) {
+    return value.trim().normalize("NFC");
+}
 
+function validateForm() {
     nameError.textContent = "";
     emailError.textContent = "";
+
     nameInput.removeAttribute("aria-invalid");
     emailInput.removeAttribute("aria-invalid");
 
-    if (!nameInput.value.trim()) {
-        nameError.textContent = "Please enter your full name.";
+    const fullName = normalizeInput(nameInput.value);
+    const email = normalizeInput(emailInput.value).toLowerCase();
+
+    let valid = true;
+
+    if (
+        fullName.length < 2 ||
+        fullName.length > 100 ||
+        /[<>]/.test(fullName)
+    ) {
+        nameError.textContent =
+            "Enter a valid name (2–100 characters).";
         nameInput.setAttribute("aria-invalid", "true");
         valid = false;
     }
 
-    if (!emailInput.validity.valid ||
-        !emailInput.value.trim()) {
+    // Use the browser's email syntax validation.
+    if (
+        !email ||
+        email.length > 254 ||
+        !emailInput.validity.valid ||
+        /[<>]/.test(email)
+    ) {
         emailError.textContent =
             "Please enter a valid email address.";
         emailInput.setAttribute("aria-invalid", "true");
         valid = false;
     }
 
-    return valid;
+    if (!valid) return null;
+
+    return { fullName, email };
 }
 
-// Simulate an asynchronous server request.
-function simulateSubmission() {
+function simulateSubmission(data) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            // Use this email to test the Error state.
-            if (emailInput.value.trim().toLowerCase() ===
-                "error@example.com") {
+            if (data.email === "error@example.com") {
                 reject(new Error("Simulated server error"));
             } else {
                 resolve();
@@ -76,10 +96,14 @@ function simulateSubmission() {
 }
 
 form.addEventListener("submit", async (event) => {
-    // Prevent the default page reload.
     event.preventDefault();
 
-    if (!validateForm()) {
+    // Prevent duplicate submissions at the handler level.
+    if (submissionInProgress) return;
+
+    const data = validateForm();
+
+    if (!data) {
         setFormState(
             FormState.ERROR,
             "Please correct the highlighted fields."
@@ -87,13 +111,15 @@ form.addEventListener("submit", async (event) => {
         return;
     }
 
+    submissionInProgress = true;
+
     setFormState(
         FormState.SUBMITTING,
         "Submitting your registration..."
     );
 
     try {
-        await simulateSubmission();
+        await simulateSubmission(data);
 
         setFormState(
             FormState.SUCCESS,
@@ -108,6 +134,8 @@ form.addEventListener("submit", async (event) => {
             FormState.ERROR,
             "Registration failed. Please try again."
         );
+    } finally {
+        submissionInProgress = false;
     }
 });
 
