@@ -28,12 +28,20 @@ from keyboard controls and the recorder.
 
 Deliverables:
 - audio-engine.js
-- Drum sound assets
+- sounds/kick.wav
+- sounds/snare.wav
+- sounds/hihat.wav
+- sounds/clap.wav
+- sounds/tom.wav
+- sounds/crash.wav
+- sounds/ride.wav
 
 Acceptance Criteria:
 - Multiple drum sounds can overlap.
 - Repeated triggers can play without interrupting
   previously triggered sounds.
+- The engine loads and decodes samples independently
+  from keyboard controls and the FIFO recorder.
 
 Dependency: HW2-01
 
