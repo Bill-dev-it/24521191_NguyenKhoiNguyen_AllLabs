@@ -31,6 +31,13 @@ M1 implementation notes:
 - Verify focus is never trapped; test Tab, Shift+Tab, Enter, and Escape where applicable.
 - Commit: `fix(a11y): keyboard trap prevention`.
 
+M2 verification notes:
+
+- No modal, drawer, dialog, or custom focus loop exists in this milestone, so there is no UI-created focus trap and no Escape-dismiss behavior to test.
+- Browser keyboard traversal reached the skip link, brand link, main navigation, hero action, all three project links, contact link, footer brand, and GitHub link in DOM order; Tab continued through the browser's normal sequence and Shift+Tab reversed direction.
+- All 12 observed keyboard stops displayed the shared 2.5px `:focus-visible` outline. The skip-link Enter behavior and focus handoff to `main#main-content` were also verified under M1.
+- No code change was needed for M2; this milestone records keyboard verification only. This was a browser interaction check, not assistive-technology certification.
+
 ### M3: Strict Content Security Policy
 
 - Add a restrictive CSP that supports the portfolio while avoiding inline scripts, inline event handlers, `eval`, and unnecessary third-party origins.
@@ -56,4 +63,5 @@ M1 implementation notes:
 ## Progress
 
 - M1 implementation: complete; awaiting student review and commit.
-- M2, M3, M4: not started.
+- M2 implementation: no UI change required; browser keyboard audit complete, awaiting student review and commit.
+- M3 and M4: not started.
