@@ -45,6 +45,13 @@ M2 verification notes:
 - Verify the browser console reports no CSP violations.
 - Commit: `security(csp): enforce strict policy`.
 
+M3 implementation notes:
+
+- Added a default-deny CSP meta policy: `default-src 'none'`; scripts and styles are same-origin only; objects are blocked; base URLs and form targets are restricted; images allow same-origin plus the one currently used `images.unsplash.com` host.
+- Source audit found no inline event-handler attributes, inline `<script>`/`<style>` blocks, `style` attributes, `javascript:` URLs, or `eval()` use in Homework 1.
+- Browser negative tests attempted to inject an inline script and an `onclick` handler. Both were blocked by `script-src 'self'`; the browser emitted the expected violations for these deliberately blocked test payloads. Normal reload showed no CSP violations, and the stylesheet and hero image loaded.
+- This static site uses a CSP meta element. It cannot enforce directives that browsers only accept from HTTP response headers, including `frame-ancestors`; production hosting should also send CSP and related security headers at the server/CDN layer. The Unsplash image host should be removed from `img-src` when M4 self-hosts the optimized image.
+
 ### M4: Lighthouse 100 and Asset Optimization
 
 - Audit a production build and record the Lighthouse run conditions/results.
@@ -62,6 +69,7 @@ M2 verification notes:
 
 ## Progress
 
-- M1 implementation: complete; awaiting student review and commit.
-- M2 implementation: no UI change required; browser keyboard audit complete, awaiting student review and commit.
-- M3 and M4: not started.
+- M1 implementation: committed as `fix(a11y): contrast & landmarks`.
+- M2 implementation: no UI change required; browser keyboard audit recorded and commit reported by student as `fix(nav): keyboard trap prevention`.
+- M3 implementation: complete; browser/source checks recorded, awaiting student review and commit.
+- M4: not started.
