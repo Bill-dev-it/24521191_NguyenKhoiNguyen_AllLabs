@@ -4,43 +4,55 @@
  * Key bindings are read from HTML data-key attributes.
  */
 
+// Build the key-to-pad lookup once during initialization.
 const drumPads = document.querySelectorAll(".drum-pad");
+const keyToPad = new Map();
 
-function handleDrumKeydown(event) {
-    // Prevent repeated sounds when holding a key.
-    if (event.repeat) {
+drumPads.forEach((pad) => {
+    const key = pad.dataset.key?.toLowerCase();
+
+    if (!key) {
+        console.warn("Drum pad is missing data-key:", pad);
         return;
     }
 
-    // Avoid intercepting typing in text fields.
+    if (keyToPad.has(key)) {
+        console.warn(`Duplicate drum key binding: ${key}`);
+        return;
+    }
+
+    keyToPad.set(key, pad);
+});
+
+function handleDrumKeydown(event) {
+    // Prevent repeated triggers when a key is held.
+    if (event.repeat) return;
+
+    // Preserve normal typing in editable elements.
+    const target = event.target;
+
     if (
-        event.target instanceof HTMLElement &&
-        (event.target.isContentEditable ||
-         ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName))
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+            ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))
     ) {
         return;
     }
 
-    // Ignore modified keyboard shortcuts.
+    // Do not override browser or system shortcuts.
     if (event.ctrlKey || event.altKey || event.metaKey) {
         return;
     }
 
+    // Look up the drum pad directly from the HTML contract.
     const pressedKey = event.key.toLowerCase();
+    const matchedPad = keyToPad.get(pressedKey);
 
-    // Find the pad using the HTML contract.
-    const matchedPad = Array.from(drumPads).find(
-        (pad) => pad.dataset.key === pressedKey
-    );
+    if (!matchedPad || matchedPad.disabled) return;
 
-    if (!matchedPad) {
-        return;
-    }
-
-    // Prevent the browser's default action.
     event.preventDefault();
 
-    // Reuse the existing click -> Audio Engine pathway.
+    // Reuse Stage 2's click-based audio playback.
     matchedPad.click();
 }
 
