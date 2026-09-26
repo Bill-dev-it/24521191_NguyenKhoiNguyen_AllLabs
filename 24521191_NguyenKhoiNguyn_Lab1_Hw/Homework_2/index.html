@@ -97,8 +97,38 @@
 
             </div>
         </section>
+
+        <section aria-labelledby="recorder-title">
+            <h2 id="recorder-title">Beat Recorder</h2>
+
+            <div class="recorder-controls">
+                <button type="button" id="record-btn">
+                    Start Recording
+                </button>
+
+                <button type="button" id="stop-btn" disabled>
+                    Stop
+                </button>
+
+                <button type="button" id="play-btn" disabled>
+                    Play Recording
+                </button>
+
+                <button type="button" id="clear-btn" disabled>
+                    Clear
+                </button>
+            </div>
+
+            <p id="recording-status" role="status" aria-live="polite">
+                Ready to record
+            </p>
+
+            <h3>Recorded Events</h3>
+            <ol id="event-list"></ol>
+        </section>
     </main>
     <script src="./audio-engine.js" defer></script>
     <script src="./keyboard.js" defer></script>
+    <script src="./recorder.js" defer></script>
 </body>
 </html>
