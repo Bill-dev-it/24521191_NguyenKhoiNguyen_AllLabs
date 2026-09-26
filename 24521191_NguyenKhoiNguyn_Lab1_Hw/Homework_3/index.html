@@ -61,6 +61,56 @@
                 Countdown not started
             </p>
         </section>
+
+        
+        <section id="registration" aria-labelledby="registration-title">
+            <h2 id="registration-title">Workshop Registration</h2>
+            <p>Register now to reserve your spot.</p>
+
+            <form id="registration-form" novalidate>
+                <div>
+                    <label for="full-name">Full Name</label>
+                    <input
+                        type="text"
+                        id="full-name"
+                        name="fullName"
+                        autocomplete="name"
+                        maxlength="100"
+                        required
+                        aria-describedby="name-error"
+                    >
+                    <p id="name-error" class="field-error"></p>
+                </div>
+
+                <div>
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        autocomplete="email"
+                        maxlength="254"
+                        required
+                        aria-describedby="email-error"
+                    >
+                    <p id="email-error" class="field-error"></p>
+                </div>
+
+                <button type="submit" id="submit-btn">
+                    Register
+                </button>
+
+                <p
+                    id="form-status"
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true"
+                ></p>
+            </form>
+        </section>
+
+
+
     </main>
     <script src="./countdown.js" defer></script>
 </body>
