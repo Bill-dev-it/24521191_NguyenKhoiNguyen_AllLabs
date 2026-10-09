@@ -1,6 +1,6 @@
 
 // Checkpoint 1 Verification Test Suite:
-import { createElement, renderToDOM } from './mini-react.js';
+import { createElement, renderToDOM } from './mini_react.js';
 
 const vApp = createElement('main', { id: 'root-view', role: 'main' },
   createElement('header', { className: 'hero' },
