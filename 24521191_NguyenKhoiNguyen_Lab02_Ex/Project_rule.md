@@ -1,198 +1,388 @@
 # LAB 02 — PROJECT RULES
 
 **Course:** Web Application Development  
-**Lab:** 02 — Modern React Architecture, Virtual DOM & State Machines
+**Lab:** 02 — Modern React Architecture, Virtual DOM & State Machines  
+**Technology Foundation:** Semantic HTML, Modern CSS Layouts, Vanilla JavaScript & Agentic Workflow  
+**Accessibility Standard:** WCAG 2.0 Level AA  
+**Scope:** 3 In-Class Exercises + 3 Homework Assignments
 
-**Technical foundation:** Semantic HTML, Modern CSS Layouts, Vanilla JavaScript & Agentic Workflow
+---
 
-## 1. Project Scope
+## 1. Project Purpose and Technical Scope
 
-Lab 02 consists of three in-class exercises and three homework assignments.
+Lab 02 explores the foundations of modern React architecture through Virtual DOM, functional components, reactive state, hooks, and event handling.
 
-The core learning focus is understanding modern React architecture through foundational web technologies, including:
+All implementation must follow the instructor's specific assignment requirements.
 
-- Virtual DOM representation and DOM reconciliation concepts.
-- Declarative UI construction and component-oriented thinking.
-- JavaScript-based DOM creation, mounting, and updates.
-- State machines and explicit UI state transitions.
-- Semantic HTML structure and browser-native behavior.
-- Modern CSS layouts where required by the assignment.
+### 1.1 Core Technical Domains
 
-These concepts must be implemented only to the extent required by each exercise or homework specification.
+- Virtual Node construction and DOM mounting.
+- Pure functional components and unidirectional data flow.
+- State storage, cursor indexing, and closure-based state setters.
+- Deterministic hook call order.
+- Browser event handling and delegation where required.
+- Semantic HTML and accessible user interfaces.
+- Modern CSS layouts when explicitly required.
 
-**React concepts do not automatically authorize using the React library.** When an assignment requires a Mini-React or Vanilla JavaScript implementation, use native browser APIs rather than React, ReactDOM, or third-party Virtual DOM libraries.
+### 1.2 Scope Restrictions
 
-## 2. Source of Truth and Scope Control
+- Do not implement concepts from future exercises prematurely.
+- Do not infer implementation requirements from lecture slides alone.
+- Do not install React or other frameworks for assignments explicitly requiring Vanilla JavaScript.
+- Do not introduce JSX compilation, routing, global state libraries, or other tooling without assignment authorization.
+- Do not create unrelated components, animations, layouts, or features.
+- Do not modify the instructor's original verification expectations.
 
-The instructor's assignment specifications are the authoritative source for implementation.
+**Rule:** Conceptual knowledge and implementation deliverables must be distinguished.
+
+---
+
+## 2. Source of Truth
 
 Apply requirements in this order:
 
-1. Explicit assignment specifications and constraints.
-2. Provided verification tests and expected behavior.
-3. Assignment-specific task decomposition.
-4. General project rules.
+1. Instructor's explicit assignment specifications.
+2. Instructor-provided test cases and deliverables.
+3. WCAG 2.0 Level A and AA success criteria applicable to the resulting web interface.
+4. Assignment-specific `Task_decomposition.md`.
+5. General project engineering conventions.
 
-If any rules conflict with the assignment, follow the instructor's explicit requirements and report the conflict.
+If any requirements appear incompatible, stop and report the conflict instead of silently ignoring one.
 
-Do not assume that every assignment requires Virtual DOM, CSS, state machines, or React components.
+WCAG requirements should be implemented with the smallest necessary change that preserves the assignment's functionality.
 
-Do not add features based solely on the Lab 02 title.
+---
 
-**Strict scope boundaries:**
+## 3. WCAG 2.0 Level AA Accessibility Policy
 
-- Do not implement features from later stages.
-- Do not add optional features without explicit approval.
-- Do not introduce unnecessary abstractions or architecture layers.
-- Do not silently alter provided test cases.
-- Do not introduce external packages unless explicitly required.
+All relevant web content must be designed and verified against the four WCAG principles:
 
-## 3. JavaScript and Mini-React Architecture
+**Perceivable, Operable, Understandable, Robust (POUR).**
 
-For assignments that require a custom Virtual DOM implementation:
+Level AA conformance includes applicable Level A and Level AA requirements.
 
-- Use JavaScript ES modules.
-- Maintain a clear distinction between virtual representations and real browser DOM nodes.
-- `createElement` constructs virtual element descriptions and must not directly mount DOM nodes.
-- `createTextElement` represents text content within the virtual structure.
-- `renderToDOM` converts the virtual structure into real DOM nodes.
-- Preserve parent-child relationships and element order.
-- Use native DOM APIs for node creation and mounting.
-- Implement property and event handling only as required by the current assignment.
+### 3.1 Perceivable
 
-Do not introduce JSX compilation, React dependencies, Fiber scheduling, diffing, reconciliation, or hooks unless specifically requested.
+- WCAG 1.1.1 (A): Provide text alternatives for meaningful non-text content.
+- WCAG 1.3.1 (A): Preserve meaningful structure and relationships through semantic HTML.
+- WCAG 1.3.2 (A): Preserve meaningful reading and content order.
+- WCAG 1.3.3 (A): Do not convey instructions exclusively through sensory characteristics.
+- WCAG 1.4.1 (A): Do not rely on color alone to communicate information.
+- WCAG 1.4.3 (AA): Maintain text contrast of at least 4.5:1 for normal text and 3:1 for qualifying large text.
+- WCAG 1.4.4 (AA): Support text resizing up to 200% without losing content or functionality.
+- WCAG 1.4.5 (AA): Prefer real text over images of text where applicable.
 
-## 4. Semantic HTML Rules
+### 3.2 Operable
 
-Use semantic HTML elements as required by the assignment.
+- WCAG 2.1.1 (A): All interactive functionality must be keyboard-operable unless the criterion allows an exception.
+- WCAG 2.1.2 (A): Do not create keyboard traps.
+- WCAG 2.2.1 (A): Provide appropriate handling of time limits if present.
+- WCAG 2.4.1 (A): Provide a mechanism to bypass repeated content blocks where applicable.
+- WCAG 2.4.2 (A): Provide a descriptive page title.
+- WCAG 2.4.3 (A): Preserve logical focus order.
+- WCAG 2.4.4 (A): Provide understandable link purposes in context.
+- WCAG 2.4.6 (AA): Use descriptive headings and labels.
+- WCAG 2.4.7 (AA): Ensure keyboard focus is visible.
 
-- Preserve the specified element hierarchy.
-- Do not substitute semantic elements with generic containers.
-- Use real DOM elements instead of HTML string templates when implementing a DOM renderer.
-- Respect explicit restrictions such as the ban on div-based output.
-- Keep HTML structure consistent with the provided verification test.
+### 3.3 Understandable
 
-When an assignment prohibits `<div>` output, the generated application tree must not contain `<div>` elements.
+- WCAG 3.1.1 (A): Declare the primary language of the page.
+- WCAG 3.1.2 (AA): Identify language changes within content when applicable.
+- WCAG 3.2.1 (A): Avoid unexpected context changes on focus.
+- WCAG 3.2.2 (A): Avoid unexpected context changes on user input.
+- WCAG 3.3.1 (A): Identify input errors when forms are present.
+- WCAG 3.3.2 (A): Provide labels or instructions for user input.
+- WCAG 3.3.3 (AA): Provide error correction suggestions when applicable.
+- WCAG 3.3.4 (AA): Provide required safeguards for eligible legal, financial, or data-related submissions.
 
-## 5. Security and DOM Safety
+### 3.4 Robust
 
-Treat dynamic text content as untrusted data.
+- WCAG 4.1.1 (A): Preserve valid markup, nesting, unique IDs, and correctly formed elements.
+- WCAG 4.1.2 (A): Ensure user interface components expose accessible names, roles, and values.
 
-- Render text through `document.createTextNode()` or an equivalent safe native text API.
-- Never insert arbitrary child strings through `innerHTML`.
-- Do not execute strings as JavaScript.
+### 3.5 Applicability Rule
+
+Not every success criterion applies to every exercise.
+
+Examples:
+
+- No form means form-specific error handling may be not applicable.
+- No images means image alternative requirements may be not applicable.
+- No audio or video means media-specific criteria may be not applicable.
+- No time limits means timing-related requirements may be not applicable.
+
+A criterion must be recorded as `PASS`, `FAIL`, `NOT APPLICABLE`, or `NOT TESTED`.
+
+Do not classify untested criteria as passed.
+
+---
+
+## 4. Semantic HTML and DOM Architecture
+
+### 4.1 Semantic Structure
+
+- Use semantic elements matching their intended purpose.
+- Preserve logical heading hierarchy.
+- Keep the DOM reading order consistent with the intended content order.
+- Use native buttons for actions.
+- Avoid unnecessary wrapper elements.
+- Do not create duplicate or improperly nested primary landmarks.
+- Use valid HTML attributes and unique IDs.
+
+### 4.2 Virtual DOM Requirements
+
+When implementing Mini-React:
+
+- VNodes are JavaScript descriptions, not real DOM elements.
+- `createElement` creates virtual element descriptions.
+- `createTextElement` represents text children.
+- `renderToDOM` converts VNodes into DOM nodes.
+- Preserve the specified VNode hierarchy and child ordering.
+- Do not add unrequested wrapper nodes.
+- Map specified props and event handlers correctly.
+- Use real DOM APIs instead of constructing markup through unsafe HTML strings.
+
+### 4.3 Native Accessibility
+
+Prefer built-in browser accessibility behavior.
+
+- Native `<button>` elements must remain keyboard accessible.
+- Do not replace a button with a generic clickable container.
+- Do not override native semantic roles unnecessarily.
+- Do not remove visible keyboard focus indicators.
+- Do not add unnecessary ARIA attributes when native semantics already provide the required behavior.
+
+---
+
+## 5. JavaScript, State and Event Architecture
+
+### 5.1 Implementation Rules
+
+- Follow the assignment's specified language and module format.
+- Keep functional responsibilities separated.
+- Avoid unnecessary global state.
+- Preserve deterministic execution where required.
+- Avoid hidden DOM side effects in VNode factory functions.
+
+### 5.2 State and Hook Rules
+
+When an assignment requires reactive state:
+
+- Maintain state outside the function component when specified.
+- Preserve state across re-renders.
+- Reset cursor indexing at the beginning of the required render pass.
+- Bind state setters to their corresponding state slots.
+- Use the specified value comparison for change detection.
+- Do not call hooks conditionally or inside loops or nested functions.
+
+Do not implement hooks in assignments that only require a VNode factory or DOM renderer.
+
+### 5.3 Event Handling
+
+- Use native browser event APIs when required.
+- Keep the specified event behavior intact.
+- Support keyboard activation of native controls.
+- Use event delegation only when required by the assignment.
+- Avoid duplicating event handlers or creating unintended listener behavior.
+
+---
+
+## 6. Security and Safe DOM Rendering
+
+Treat dynamic input and text children as untrusted content.
+
+- Use `document.createTextNode()` for text VNodes.
+- Never use `innerHTML` to render untrusted text children.
+- Do not execute text children as JavaScript.
 - Do not use `eval()` or `new Function()`.
-- Preserve the difference between text content and executable markup.
+- Do not generate executable elements from text payloads.
 
-Security checkpoints must be verified using the instructor's required test inputs.
+For Exercise 1, the following inputs must remain inert text:
 
-For Exercise 1, the string `<script>alert(1)</script>` must remain inert text and must not execute.
+- `<script>alert(1)</script>`
+- `<img onerror=alert(1)> Safe Text`
 
-## 6. State Machine Rules
+Security verification is distinct from accessibility verification.
 
-For assignments involving state machines:
+Passing an XSS test does not by itself establish WCAG conformance.
 
-- Define only the states explicitly required by the assignment.
-- Identify permitted state transitions.
-- Implement transitions using the specified events or actions.
-- Keep state changes deterministic.
-- Ensure the rendered UI reflects the current state.
-- Validate transitions against assignment-specific tests.
+---
 
-Do not introduce global state libraries, Redux, XState, or additional state-management frameworks unless requested.
+## 7. Task Decomposition Standard
 
-## 7. Styling and CSS Rules
+Each assignment must have an independent `Task_decomposition.md`.
 
-For assignments requiring CSS:
+### 7.1 Required Structure
 
-- Follow the specified layout and visual requirements.
-- Prefer native modern CSS features when appropriate.
-- Preserve semantic HTML when styling.
-- Keep styling concerns separate from JavaScript logic where required.
-- Do not add animation, component libraries, CSS frameworks, or decorative effects unless specified.
+1. Assignment identification and scope.
+2. Requirement traceability matrix.
+3. Hierarchical WBS.
+4. Implementation dependencies and execution stages.
+5. Acceptance criteria for each task.
+6. Relevant WCAG 2.0 Level A/AA mappings.
+7. Verification evidence and completion status.
+8. Required Git commit checkpoints.
 
-Do not create unnecessary CSS files for assignments that do not require styling.
+### 7.2 WBS Design Rules
 
-## 8. Agentic Workflow and Stage Execution
+Each instructor bullet must be mapped to one or more WBS tasks.
 
-The AI Agent acts as an implementation assistant, not an autonomous project owner.
+Use consistent hierarchical numbering:
 
-Every assignment must have its own `task_decomposition.md`.
+- `1` — Requirement group
+- `1.1` — Major task
+- `1.1.1` — Actionable subtask
 
-**Mandatory execution protocol:**
+Subtasks must identify specific actions or verifiable outcomes.
 
-1. Read the assignment requirements.
-2. Read `PROJECT_RULES.md`.
-3. Read the assignment's `task_decomposition.md`.
-4. Identify the current unfinished stage.
-5. Implement only that stage.
-6. Verify its acceptance criteria.
-7. Report the changed files and verification results.
-8. Stop and wait for explicit user approval before moving to the next stage.
+Do not use broad statements such as "Implement accessibility" without decomposing them into relevant, testable criteria.
+
+### 7.3 Documentation Accessibility
+
+- Use one clear document title.
+- Maintain logical heading levels.
+- Use descriptive headings.
+- Use real Markdown lists and task checkboxes.
+- Never use spacing, indentation alone, or color as the sole means of communicating structure.
+- Use meaningful link labels.
+- Write concise and understandable task descriptions.
+- Keep status labels readable without color dependence.
+- Preserve readable code blocks with explicitly identified languages.
+- Avoid decorative symbols that substitute for actual content.
+
+These practices improve the accessibility of the Markdown source and its rendered representation, but full accessibility of the final document also depends on the Markdown renderer.
+
+---
+
+## 8. Agentic Development Workflow
+
+The AI Agent must operate under user-controlled, stage-based execution.
+
+### 8.1 Mandatory Workflow
+
+1. Read `Project_rule.md`.
+2. Read the current assignment and `Task_decomposition.md`.
+3. Identify the current unfinished stage.
+4. Identify the instructor requirements covered by that stage.
+5. Identify applicable WCAG criteria.
+6. Implement only the approved stage.
+7. Run relevant functional and accessibility checks.
+8. Report changed files, verification results, and remaining issues.
+9. Stop and wait for user approval.
+
+### 8.2 Agent Restrictions
 
 The Agent must not:
 
-- One-shot the entire exercise or homework.
-- Combine multiple stages without permission.
-- Automatically implement upcoming stages.
-- Generate unrelated files.
-- Rewrite previously verified stages unnecessarily.
-- Claim success without verification.
-- Commit code without the required stage verification.
+- Complete an entire assignment in one unapproved operation.
+- Implement tasks belonging to future stages.
+- Add packages or tools without necessity.
+- Change original verification tests merely to obtain a passing result.
+- Automatically commit without permission.
+- Claim WCAG Level AA conformance without sufficient evidence.
+- Mark unverified tasks as complete.
+- Add extra application features under the pretext of accessibility.
 
-When requirements are ambiguous, ask for clarification rather than inventing behavior.
+### 8.3 Reporting Format
 
-## 9. Testing and Browser DevTools
+At the end of each stage, report:
 
-Verification must correspond directly to the instructor's requirements.
+- Completed WBS items.
+- Modified files.
+- Functional test results.
+- Accessibility results and applicable WCAG criteria.
+- Unresolved requirements.
+- Expected next stage.
+- Required Git commit, if applicable.
 
-For Virtual DOM exercises, inspect:
+---
 
-- Virtual Node structure.
-- Generated real DOM node types.
-- Element properties and event handlers.
-- Parent-child hierarchy.
-- Semantic HTML elements.
-- Safe text-node behavior.
-- Console assertions and runtime errors.
+## 9. Testing and Accessibility Verification
 
-Use the browser DevTools Elements panel whenever a live DOM audit is required.
+### 9.1 Functional Testing
 
-Do not replace the instructor's verification test with a different test suite.
+- Verify required functions and outputs.
+- Run the instructor's provided test suite.
+- Inspect browser console assertions.
+- Check the rendered DOM hierarchy.
+- Confirm event behavior.
 
-Additional manual checks may be used only to verify explicit assignment constraints.
+### 9.2 Accessibility Testing
 
-## 10. Git and Commit Discipline
+Use appropriate checks from the following:
 
-Maintain a meaningful Git history reflecting completed implementation milestones.
+- Browser DevTools Elements panel.
+- Keyboard-only navigation using Tab, Shift+Tab, Enter, and Space.
+- Visible focus verification.
+- Semantic HTML and accessible-name inspection.
+- HTML validity and duplicate-ID checks.
+- Contrast verification where styling is present.
+- Text resize testing where applicable.
+- Screen-reader or accessibility-tree inspection when needed.
 
-- Follow exact commit messages when specified by the instructor.
-- Keep commits focused on their intended functionality.
-- Verify a stage before committing.
-- Do not merge required implementation commits.
-- Do not commit unrelated experiments, generated dependencies, or temporary debugging files.
-- Do not execute Git commit automatically without user approval.
+Automated accessibility tools may assist with testing but do not replace manual verification or prove full WCAG compliance.
 
-For Exercise 1, the instructor requires:
+### 9.3 Evidence Rules
 
-**Commit 1:**
+Each verification result must identify:
+
+- What was tested.
+- Expected behavior.
+- Observed behavior.
+- PASS, FAIL, NOT APPLICABLE, or NOT TESTED.
+
+Do not record unperformed tests as successful.
+
+---
+
+## 10. Git and Version Control
+
+- Use meaningful atomic commits.
+- Preserve assignment-specific commit messages exactly.
+- Commit only completed and verified implementation milestones.
+- Keep unrelated files out of implementation commits.
+- Do not rewrite existing commit history without user approval.
+- Documentation updates may be committed separately.
+
+### Exercise 1 Mandatory Commits
+
+Commit 1:
+
 `feat(core): implement createElement factory`
 
-**Commit 2:**
+Commit 2:
+
 `feat(core): implement renderToDOM`
 
-These are the required implementation commits and must remain distinct.
+These commits must remain distinct and appear in the correct order.
 
-## 11. Completion Criteria
+---
 
-An assignment is complete only when:
+## 11. Definition of Done
 
-- All explicit requirements are implemented.
-- All specified constraints are satisfied.
-- Provided verification tests pass.
-- Required manual or DevTools audits are performed.
-- Required Git commits exist.
-- The task decomposition reflects verified completion.
-- No out-of-scope implementation has been introduced.
+An assignment can be marked complete only when:
 
-Do not proceed to the next assignment until the current assignment has been reviewed and accepted.
+- All explicitly required functions or features are implemented.
+- Instructor-provided tests pass.
+- Semantic and security constraints are verified.
+- Relevant WCAG 2.0 Level A and AA criteria have been assessed.
+- Required manual audits are completed.
+- Git requirements are satisfied.
+- Task decomposition reflects actual completion status.
+- No unapproved scope expansion is present.
+
+A working UI alone is not proof that the assignment or WCAG verification is complete.
+
+---
+
+## 12. Authoritative Reference
+
+W3C — Web Content Accessibility Guidelines (WCAG) 2.0
+
+https://www.w3.org/TR/WCAG20/
+
+W3C — How to Meet WCAG 2 (Quick Reference)
+
+https://www.w3.org/WAI/WCAG22/quickref/
+
+For this project, use the WCAG 2.0 criteria rather than silently substituting WCAG 2.1 or WCAG 2.2 requirements.

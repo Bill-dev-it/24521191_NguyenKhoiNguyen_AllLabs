@@ -1,226 +1,164 @@
-# LAB 02 — EXERCISE 1: TASK DECOMPOSITION
+# Lab 02 — Exercise 1: Task Decomposition
 
-**Topic:** Modern React Architecture, Virtual DOM & State Machines  
 **Exercise:** Building Mini-React VNode & Mounting Engine  
-**Sprint:** In-Class Sprint 1 — 35 Minutes
+**Sprint:** In-Class Sprint 1 — 35 Minutes  
+**Accessibility Target:** WCAG 2.0 Level AA  
+**Implementation Status:** Completed
 
-## Objective
+## 1. Core Mini-React Implementation
 
-Implement a minimal Mini-React Virtual Node factory and DOM mounting engine from scratch, following the instructor's five specifications and the provided Checkpoint 1 verification test.
+**Instructor Requirement 1:** Implement `createElement`, `createTextElement`, and `renderToDOM` from scratch.
 
-**Scope:** `createElement`, `createTextElement`, `renderToDOM`, semantic HTML output, XSS resistance, DOM audit, and two required Git commits.
+### 1.1 createElement
 
----
+- [x] Create and export `createElement`.
+- [x] Accept element type, props, and children.
+- [x] Support null properties.
+- [x] Generate the correct Virtual Node structure.
+- [x] Convert primitive string children into text VNodes.
+- [x] Preserve nested VNodes and child ordering.
 
-## WBS 1 — Core Mini-React Implementation
+### 1.2 createTextElement
 
-**Source:** Bullet 1 — Implement `createElement`, `createTextElement`, and `renderToDOM` from scratch.
+- [x] Implement and export `createTextElement`.
+- [x] Represent textual content using `TEXT_ELEMENT`.
+- [x] Store the original text in `props.nodeValue`.
+- [x] Ensure compatibility with the DOM renderer.
 
-### 1.1 — Implement createElement
+### 1.3 renderToDOM
 
-- [ ] 1.1.1 Create `mini-react.js` as an ES module.
-- [ ] 1.1.2 Define and export `createElement`.
-- [ ] 1.1.3 Accept `type`, `props`, and child arguments.
-- [ ] 1.1.4 Construct a Virtual Node containing the element type, properties, and children.
-- [ ] 1.1.5 Support `null` props as used in the supplied test.
-- [ ] 1.1.6 Convert primitive text children into text VNodes.
-- [ ] 1.1.7 Preserve nested child VNodes and their order.
+- [x] Implement and export `renderToDOM`.
+- [x] Convert element VNodes into native DOM elements.
+- [x] Convert text VNodes into DOM text nodes.
+- [x] Apply required properties: `id`, `role`, and `className`.
+- [x] Attach the button click event listener.
+- [x] Render children recursively.
+- [x] Return the completed DOM node.
 
-**Verification:** Confirm the constructed VNode tree represents the structure defined in the instructor's test.
+**Result:** PASS — All three required functions implemented.
 
-### 1.2 — Implement createTextElement
+## 2. Semantic HTML Constraint
 
-- [ ] 1.2.1 Define and export `createTextElement`.
-- [ ] 1.2.2 Accept a primitive text value.
-- [ ] 1.2.3 Construct a text VNode representation.
-- [ ] 1.2.4 Store the text value without interpreting it as HTML markup.
-- [ ] 1.2.5 Ensure text VNodes are compatible with the mounting engine.
+**Instructor Requirement 2:** Render semantic HTML elements and prevent div-soup.
 
-**Verification:** Text children must remain text in the virtual representation.
+- [x] Render `<main>` correctly.
+- [x] Render `<section>` correctly.
+- [x] Render native `<button>` correctly.
+- [x] Preserve the required `header`, `h1`, and `p` hierarchy.
+- [x] Preserve VNode parent-child relationships.
+- [x] Verify no unnecessary `<div>` wrappers are created.
+- [x] Use `section#app` as the mount container.
+- [x] Confirm the generated application has one primary `main` landmark.
 
-### 1.3 — Implement renderToDOM
+**WCAG Mapping:** 1.3.1, 1.3.2, 4.1.1, 4.1.2.
 
-- [ ] 1.3.1 Define and export `renderToDOM`.
-- [ ] 1.3.2 Accept a Virtual Node as input.
-- [ ] 1.3.3 Create real elements using `document.createElement`.
-- [ ] 1.3.4 Create real text nodes using `document.createTextNode`.
-- [ ] 1.3.5 Apply VNode properties to the corresponding DOM elements.
-- [ ] 1.3.6 Handle `className` as a DOM class.
-- [ ] 1.3.7 Attach the `onClick` handler to the button.
-- [ ] 1.3.8 Recursively render nested children.
-- [ ] 1.3.9 Append rendered child nodes to the correct parent.
-- [ ] 1.3.10 Return the completed DOM node for mounting.
+**Result:** PASS — Semantic structure verified with Chrome DevTools.
 
-**Verification:** `renderToDOM(vApp)` must return a mountable DOM node matching the original VNode hierarchy.
+## 3. XSS Resistance
 
----
+**Instructor Requirement 3:** Verify XSS resistance for `<script>alert(1)</script>`.
 
-## WBS 2 — Semantic HTML Constraint
+- [x] Use text VNodes for string children.
+- [x] Render text using `document.createTextNode()`.
+- [x] Verify the supplied `<img onerror=alert(1)> Safe Text` payload.
+- [x] Verify the `<script>alert(1)</script>` payload.
+- [x] Confirm malicious strings remain literal text.
+- [x] Confirm no executable elements are created from the tested strings.
+- [x] Confirm the tested payloads do not execute.
 
-**Source:** Bullet 2 — Produce semantic tags (`<main>`, `<section>`, `<button>`); div-soup banned.
+**Result:** PASS — Tested with Chrome DevTools Snippets.
 
-### 2.1 — Semantic Element Rendering
+## 4. DevTools DOM Audit
 
-- [ ] 2.1.1 Verify `createElement` accepts `main` as an element type.
-- [ ] 2.1.2 Verify `createElement` accepts `section` as an element type.
-- [ ] 2.1.3 Verify `createElement` accepts `button` as an element type.
-- [ ] 2.1.4 Ensure `renderToDOM` creates the actual requested HTML tag.
+**Instructor Requirement 4:** Confirm DOM and VNode consistency without orphan nodes.
 
-### 2.2 — Preserve Semantic Hierarchy
+- [x] Open the application in Chrome.
+- [x] Inspect the Elements panel.
+- [x] Verify `main#root-view`.
+- [x] Verify `header.hero`, `h1`, `p`, and `button`.
+- [x] Verify expected element properties.
+- [x] Verify parent-child relationships.
+- [x] Verify the renderer adds no unnecessary nodes.
+- [x] Verify the button click outputs `Ping`.
 
-- [ ] 2.2.1 Preserve parent-child relationships from the VNode tree.
-- [ ] 2.2.2 Preserve the specified nesting of semantic elements.
-- [ ] 2.2.3 Verify elements are not replaced with generic containers.
+**Result:** PASS — Rendered application DOM matches the expected VNode hierarchy.
 
-### 2.3 — Zero Div-Soup Verification
+## 5. Git Requirements
 
-- [ ] 2.3.1 Inspect the generated application DOM.
-- [ ] 2.3.2 Confirm the renderer does not introduce `<div>` wrappers.
-- [ ] 2.3.3 Confirm all output elements retain their specified tag names.
+**Instructor Requirement 5:** Create two separate implementation commits.
 
-**Verification:** The output must respect the VNode tag types without introducing div-based wrappers.
+- [x] Complete and commit the VNode factory.
 
----
+Commit: `8a22995`  
+Message: `feat(core): implement createElement factory`
 
-## WBS 3 — Security Checkpoint: XSS Resistance
+- [x] Complete and commit the DOM mounting engine.
 
-**Source:** Bullet 3 — Verify XSS resistance when passing `<script>alert(1)</script>` as a child.
+Commit: `8afdf0b`  
+Message: `feat(core): implement renderToDOM`
 
-### 3.1 — Safe Text Processing
+**Result:** PASS — Both commits verified in Git history.
 
-- [ ] 3.1.1 Ensure string children are represented as text VNodes.
-- [ ] 3.1.2 Render text children using text nodes rather than HTML parsing.
-- [ ] 3.1.3 Preserve special characters as literal text.
+## 6. Checkpoint 1 Verification
 
-### 3.2 — XSS Verification
+- [x] Prepare `index.html`.
+- [x] Prepare `mini_react.js`.
+- [x] Prepare `test_runner.js`.
+- [x] Construct `vApp` using the provided test.
+- [x] Locate the application mount point.
+- [x] Mount using `replaceChildren(renderToDOM(vApp))`.
+- [x] Confirm the button exists.
+- [x] Confirm the `Mount Failed` assertion does not trigger.
+- [x] Verify the expected visible output.
 
-- [ ] 3.2.1 Pass `<script>alert(1)</script>` as a child of a VNode.
-- [ ] 3.2.2 Render the VNode into the DOM.
-- [ ] 3.2.3 Confirm the payload appears as literal text.
-- [ ] 3.2.4 Confirm no JavaScript alert is executed.
-- [ ] 3.2.5 Confirm no executable `<script>` element is created from the string.
+**Result:** PASS — Checkpoint 1 successfully executed.
 
-### 3.3 — Provided Test String
+## 7. WCAG 2.0 Level AA — Relevant Accessibility Checks
 
-- [ ] 3.3.1 Render `<img onerror=alert(1)> Safe Text` from the supplied test.
-- [ ] 3.3.2 Confirm it is displayed as text rather than interpreted as an image element.
-- [ ] 3.3.3 Confirm the injected event handler does not execute.
+### 7.1 Perceivable
 
-**Verification:** Both XSS test strings must remain inert text.
+- [x] Verify semantic heading and content structure (1.3.1).
+- [x] Verify meaningful reading order (1.3.2).
+- [x] Check displayed text contrast (1.4.3).
+- [x] Check content usability at 200% zoom (1.4.4).
 
----
+### 7.2 Operable
 
-## WBS 4 — Browser DevTools Audit
+- [x] Verify keyboard focus using Tab (2.1.1).
+- [x] Verify Enter and Space button activation (2.1.1).
+- [x] Verify no keyboard trap during tested navigation (2.1.2).
+- [x] Verify logical focus order (2.4.3).
+- [x] Verify visible focus indication (2.4.7).
 
-**Source:** Bullet 4 — Inspect the Elements panel and confirm that the actual DOM matches the VNode tree without orphan nodes.
+### 7.3 Understandable
 
-### 4.1 — Inspect Rendered DOM
+- [x] Confirm the document language is declared (3.1.1).
+- [x] Confirm a descriptive page title exists (2.4.2).
+- [x] Verify focusing the button does not unexpectedly change context (3.2.1).
 
-- [ ] 4.1.1 Open the page in the browser.
-- [ ] 4.1.2 Open Developer Tools.
-- [ ] 4.1.3 Navigate to the Elements panel.
-- [ ] 4.1.4 Locate the mounted application root.
+### 7.4 Robust
 
-### 4.2 — Compare DOM and VNode Structure
+- [x] Inspect valid nesting and element hierarchy (4.1.1).
+- [x] Verify unique application IDs (4.1.1).
+- [x] Verify the native button has an accessible name and role (4.1.2).
+- [x] Verify one generated primary main landmark.
 
-- [ ] 4.2.1 Verify the `<main>` root element.
-- [ ] 4.2.2 Verify the nested `<header>`, `<h1>`, and `<p>` elements.
-- [ ] 4.2.3 Verify the `<button>` element.
-- [ ] 4.2.4 Verify expected text content.
-- [ ] 4.2.5 Verify `id`, `role`, and `className` mapping.
-- [ ] 4.2.6 Verify that the button click executes the provided handler.
+**Result:** Reported accessibility checks completed.
 
-### 4.3 — Orphan Node Audit
+**Conformance Note:** These are exercise-level accessibility checks. They are not a formal audit of every applicable WCAG 2.0 Level A and AA success criterion.
 
-- [ ] 4.3.1 Verify each rendered child appears under its expected parent.
-- [ ] 4.3.2 Verify no unintended sibling or duplicate nodes are created by the renderer.
-- [ ] 4.3.3 Confirm the rendered tree matches the VNode structure.
+## 8. Final Exercise Status
 
-**Verification:** The browser's actual DOM must match the specified VNode tree.
+| Requirement | Result |
+|---|---|
+| Core Mini-React functions | PASS |
+| Semantic HTML and zero div-soup | PASS |
+| XSS resistance | PASS |
+| DOM and VNode audit | PASS |
+| Mandatory Git commits | PASS |
+| Checkpoint 1 | PASS |
+| Exercise-level accessibility checks | PASS |
 
----
+**Final Status:** Exercise 1 implementation and required checks completed.
 
-## WBS 5 — Git Commit Requirements
-
-**Source:** Bullet 5 — Two mandatory Git commits.
-
-### 5.1 — Commit 1: VNode Factory
-
-- [ ] 5.1.1 Complete `createElement`.
-- [ ] 5.1.2 Complete `createTextElement`.
-- [ ] 5.1.3 Verify the VNode factory.
-- [ ] 5.1.4 Stage the relevant implementation file.
-- [ ] 5.1.5 Create the required commit:
-
-`feat(core): implement createElement factory`
-
-### 5.2 — Commit 2: DOM Mounting
-
-- [ ] 5.2.1 Complete `renderToDOM`.
-- [ ] 5.2.2 Verify the DOM rendering behavior.
-- [ ] 5.2.3 Stage the relevant implementation changes.
-- [ ] 5.2.4 Create the required commit:
-
-`feat(core): implement renderToDOM`
-
-**Verification:** Git history must contain both required commits in the correct order.
-
----
-
-## WBS 6 — Checkpoint 1 Verification Test Suite
-
-**Source:** Instructor-provided `test-runner.js`.
-
-### 6.1 — Prepare the Verification Environment
-
-- [ ] 6.1.1 Create an HTML entry point containing `id="app"`.
-- [ ] 6.1.2 Create `test-runner.js` using the instructor-provided test code.
-- [ ] 6.1.3 Import `createElement` and `renderToDOM` from `./mini-react.js`.
-- [ ] 6.1.4 Load the test script as a JavaScript module.
-
-### 6.2 — Execute Provided Verification
-
-- [ ] 6.2.1 Construct the `vApp` VNode tree exactly as specified.
-- [ ] 6.2.2 Locate the application root using `document.getElementById('app')`.
-- [ ] 6.2.3 Execute `renderToDOM(vApp)`.
-- [ ] 6.2.4 Mount the returned DOM node using `root.replaceChildren(...)`.
-- [ ] 6.2.5 Execute the provided `console.assert` statement.
-
-### 6.3 — Validate Checkpoint Result
-
-- [ ] 6.3.1 Confirm the `<button>` exists inside the mounted application.
-- [ ] 6.3.2 Confirm no `Mount Failed` assertion is reported.
-- [ ] 6.3.3 Confirm the browser console contains no relevant runtime errors.
-- [ ] 6.3.4 Confirm the mounted DOM matches the test's intended structure.
-
-**Verification:** The instructor's Checkpoint 1 test must pass without modifying its expected behavior.
-
----
-
-## Implementation Order — Stage-Based Execution
-
-The WBS above is organized by instructor requirements. Actual implementation must follow the dependency order below.
-
-| Stage | Related WBS | Deliverable |
-|---|---|---|
-| Stage 1 — Setup | 6.1 | HTML entry point and test environment |
-| Stage 2 — VNode Factory | 1.1, 1.2, 5.1 | `createElement`, `createTextElement`, Commit 1 |
-| Stage 3 — DOM Mounting | 1.3, 5.2 | `renderToDOM`, Commit 2 |
-| Stage 4 — Verification | 2, 3, 4, 6.2, 6.3 | Semantic, XSS, DevTools and Checkpoint 1 verification |
-
-**Execution rule:** Complete one stage, verify its applicable acceptance criteria, and stop for approval before proceeding.
-
----
-
-## Final Acceptance Checklist
-
-- [ ] `createElement` implemented.
-- [ ] `createTextElement` implemented.
-- [ ] `renderToDOM` implemented.
-- [ ] Semantic HTML constraints satisfied.
-- [ ] Zero div-soup requirement satisfied.
-- [ ] XSS resistance verified.
-- [ ] DOM and VNode tree consistency verified in DevTools.
-- [ ] No orphan nodes identified.
-- [ ] Checkpoint 1 passed.
-- [ ] Both mandatory Git commits completed.
+**Reference:** https://www.w3.org/TR/WCAG20/
