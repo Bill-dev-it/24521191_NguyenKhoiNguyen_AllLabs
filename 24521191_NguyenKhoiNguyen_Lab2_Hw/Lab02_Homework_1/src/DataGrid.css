@@ -359,3 +359,53 @@ h1 {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ========================================
+   STAGE 5 - ACCESSIBLE GRID INTERACTIONS
+   ======================================== */
+
+/* Clear keyboard focus on grid cells */
+.asset-table td[role="gridcell"]:focus-visible {
+  outline: 3px solid #67e8f9;
+  outline-offset: -3px;
+  background-color: #17374d;
+}
+
+/* Selected row */
+.asset-table tr.selected-row {
+  background-color: #173b50;
+}
+
+.asset-table tr.selected-row td:first-child {
+  box-shadow: inset 4px 0 0 #67e8f9;
+}
+
+/* Keep focus visible on all interactive controls */
+.sort-button:focus-visible,
+.row-action:focus-visible,
+.page-button:focus-visible {
+  outline: 3px solid #67e8f9;
+  outline-offset: 3px;
+}
+
+/* Selected row under mouse hover */
+.asset-table tr.selected-row:hover {
+  background-color: #20516b;
+}
+
+/* Support Windows high contrast mode */
+@media (forced-colors: active) {
+  .asset-table td:focus-visible {
+    outline: 3px solid Highlight;
+  }
+
+  .asset-table tr.selected-row {
+    outline: 2px solid Highlight;
+  }
+
+  .sort-button,
+  .row-action,
+  .page-button {
+    border: 1px solid ButtonText;
+  }
+}

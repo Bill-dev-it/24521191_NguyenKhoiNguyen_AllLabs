@@ -1,6 +1,13 @@
 
-import { useId, useMemo, useState } from "react";
-import type { DataGridProps } from "./data-grid-contract";
+import {
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type {
+  DataGridProps,
+} from "./data-grid-contract";
 import "./DataGrid.css";
 
 type SortDirection = "asc" | "desc" | null;
@@ -8,6 +15,11 @@ type SortDirection = "asc" | "desc" | null;
 interface SortState<T> {
   key: keyof T | null;
   direction: SortDirection;
+}
+
+interface CellPosition {
+  row: number;
+  col: number;
 }
 
 const PAGE_SIZE = 5;
@@ -19,6 +31,9 @@ export function DataGrid<T extends object>({
   onRowSelect,
 }: DataGridProps<T>) {
   const searchId = useId();
+  const instructionsId = useId();
+
+  const tableRef = useRef<HTMLTableElement>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sort, setSort] = useState<SortState<T>>({
@@ -27,55 +42,58 @@ export function DataGrid<T extends object>({
   });
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Stage 4A: Filtering
+  const [focusedCell, setFocusedCell] =
+    useState<CellPosition>({ row: 0, col: 0 });
+
+  const [selectedItem, setSelectedItem] =
+    useState<T | null>(null);
+
+  const [announcement, setAnnouncement] =
+    useState("");
+
+  // 1. FILTERING
   const filteredData = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
     if (!query) return data;
 
     return data.filter((item) =>
-      columns.some((column) => {
-        const value = item[column.accessorKey];
-        return String(value ?? "")
+      columns.some((column) =>
+        String(item[column.accessorKey] ?? "")
           .toLowerCase()
-          .includes(query);
-      })
+          .includes(query)
+      )
     );
   }, [data, columns, searchQuery]);
 
-  // Stage 4B: Sorting
+  // 2. SORTING
   const sortedData = useMemo(() => {
     if (!sort.key || !sort.direction) {
       return filteredData;
     }
 
-    return [...filteredData].sort((a, b) => {
-      const first = a[sort.key!];
-      const second = b[sort.key!];
+    const key = sort.key;
 
-      const comparison = String(first ?? "").localeCompare(
-        String(second ?? ""),
+    return [...filteredData].sort((a, b) => {
+      const result = String(a[key] ?? "").localeCompare(
+        String(b[key] ?? ""),
         undefined,
-        {
-          numeric: true,
-          sensitivity: "base",
-        }
+        { numeric: true, sensitivity: "base" }
       );
 
       return sort.direction === "asc"
-        ? comparison
-        : -comparison;
+        ? result
+        : -result;
     });
   }, [filteredData, sort]);
 
-  // Stage 4C: Pagination
+  // 3. PAGINATION
   const totalPages = Math.max(
     1,
     Math.ceil(sortedData.length / PAGE_SIZE)
   );
 
   const safePage = Math.min(currentPage, totalPages);
-
   const startIndex = (safePage - 1) * PAGE_SIZE;
 
   const visibleData = sortedData.slice(
@@ -84,16 +102,30 @@ export function DataGrid<T extends object>({
   );
 
   const firstRecord =
-    sortedData.length === 0 ? 0 : startIndex + 1;
+    sortedData.length > 0 ? startIndex + 1 : 0;
 
   const lastRecord = Math.min(
     startIndex + PAGE_SIZE,
     sortedData.length
   );
 
+  const columnCount = columns.length;
+
+  const safeFocusedCell: CellPosition = {
+    row: Math.min(
+      focusedCell.row,
+      Math.max(visibleData.length - 1, 0)
+    ),
+    col: Math.min(
+      focusedCell.col,
+      Math.max(columnCount - 1, 0)
+    ),
+  };
+
   function handleSearch(value: string) {
     setSearchQuery(value);
     setCurrentPage(1);
+    setFocusedCell({ row: 0, col: 0 });
   }
 
   function handleSort(key: keyof T) {
@@ -110,16 +142,15 @@ export function DataGrid<T extends object>({
     });
 
     setCurrentPage(1);
+    setFocusedCell({ row: 0, col: 0 });
   }
 
-  function getAriaSort(
-    key: keyof T
-  ): "ascending" | "descending" | "none" {
-    if (sort.key !== key) return "none";
+  function getAriaSort(key: keyof T) {
+    if (sort.key !== key) return "none" as const;
 
     return sort.direction === "asc"
-      ? "ascending"
-      : "descending";
+      ? ("ascending" as const)
+      : ("descending" as const);
   }
 
   function getSortIcon(key: keyof T) {
@@ -127,14 +158,109 @@ export function DataGrid<T extends object>({
     return sort.direction === "asc" ? "↑" : "↓";
   }
 
+  function changePage(nextPage: number) {
+    setCurrentPage(nextPage);
+    setFocusedCell({ row: 0, col: 0 });
+    setAnnouncement(
+      `Page ${nextPage} of ${totalPages}`
+    );
+  }
+
+  // 4. ROVING TABINDEX
+  function moveFocus(row: number, col: number) {
+    const nextRow = Math.max(
+      0,
+      Math.min(row, visibleData.length - 1)
+    );
+
+    const nextCol = Math.max(
+      0,
+      Math.min(col, columnCount - 1)
+    );
+
+    const cell = tableRef.current?.querySelector<
+      HTMLTableCellElement
+    >(
+      `[data-cell="${nextRow}-${nextCol}"]`
+    );
+
+    if (cell) {
+      setFocusedCell({
+        row: nextRow,
+        col: nextCol,
+      });
+
+      cell.focus();
+    }
+  }
+
+  // 5. KEYBOARD INTERACTION
+  function handleCellKeyDown(
+    event: React.KeyboardEvent<HTMLTableCellElement>,
+    rowIndex: number,
+    colIndex: number,
+    item: T
+  ) {
+    switch (event.key) {
+      case "ArrowRight":
+        event.preventDefault();
+        moveFocus(rowIndex, colIndex + 1);
+        break;
+
+      case "ArrowLeft":
+        event.preventDefault();
+        moveFocus(rowIndex, colIndex - 1);
+        break;
+
+      case "ArrowDown":
+        event.preventDefault();
+        moveFocus(rowIndex + 1, colIndex);
+        break;
+
+      case "ArrowUp":
+        event.preventDefault();
+        moveFocus(rowIndex - 1, colIndex);
+        break;
+
+      case "Enter":
+        event.preventDefault();
+        if (onRowSelect) {
+          onRowSelect(item);
+          setAnnouncement("Asset details opened");
+        }
+        break;
+
+      case " ":
+        event.preventDefault();
+        setSelectedItem((previous) =>
+          previous === item ? null : item
+        );
+
+        setAnnouncement(
+          selectedItem === item
+            ? "Row deselected"
+            : "Row selected"
+        );
+        break;
+
+      default:
+        break;
+    }
+  }
+
   return (
     <div className="grid-container">
+      <p id={instructionsId} className="sr-only">
+        Use arrow keys to navigate grid cells.
+        Press Enter to open asset details.
+        Press Space to select or deselect a row.
+      </p>
+
       <div className="grid-toolbar">
         <div className="search-field">
           <label htmlFor={searchId}>
             Search assets
           </label>
-
           <input
             id={searchId}
             type="search"
@@ -153,94 +279,145 @@ export function DataGrid<T extends object>({
 
       <div className="grid-scroll">
         <table
+          ref={tableRef}
+          role="grid"
           className="asset-table"
           aria-label={ariaLabel}
+          aria-describedby={instructionsId}
+          aria-multiselectable="false"
+          aria-colcount={
+            columnCount + (onRowSelect ? 1 : 0)
+          }
+          aria-rowcount={sortedData.length + 1}
         >
           <thead>
-            <tr>
-              {columns.map((column) => {
-                const key = column.accessorKey;
-
-                return (
-                  <th
-                    key={String(key)}
-                    scope="col"
-                    aria-sort={
-                      column.sortable
-                        ? getAriaSort(key)
-                        : undefined
-                    }
-                  >
-                    {column.sortable ? (
-                      <button
-                        type="button"
-                        className="sort-button"
-                        onClick={() => handleSort(key)}
+            <tr role="row" aria-rowindex={1}>
+              {columns.map((column) => (
+                <th
+                  key={String(column.accessorKey)}
+                  role="columnheader"
+                  scope="col"
+                  aria-sort={
+                    column.sortable
+                      ? getAriaSort(column.accessorKey)
+                      : undefined
+                  }
+                >
+                  {column.sortable ? (
+                    <button
+                      type="button"
+                      className="sort-button"
+                      onClick={() =>
+                        handleSort(column.accessorKey)
+                      }
+                    >
+                      <span>{column.header}</span>
+                      <span
+                        className="sort-icon"
+                        aria-hidden="true"
                       >
-                        <span>{column.header}</span>
-
-                        <span
-                          className="sort-icon"
-                          aria-hidden="true"
-                        >
-                          {getSortIcon(key)}
-                        </span>
-                      </button>
-                    ) : (
-                      column.header
-                    )}
-                  </th>
-                );
-              })}
+                        {getSortIcon(column.accessorKey)}
+                      </span>
+                    </button>
+                  ) : (
+                    column.header
+                  )}
+                </th>
+              ))}
 
               {onRowSelect && (
-                <th scope="col">Actions</th>
+                <th role="columnheader" scope="col">
+                  Actions
+                </th>
               )}
             </tr>
           </thead>
 
           <tbody>
             {visibleData.length === 0 ? (
-              <tr>
+              <tr role="row">
                 <td
+                  role="gridcell"
                   colSpan={
-                    columns.length +
-                    (onRowSelect ? 1 : 0)
+                    columnCount + (onRowSelect ? 1 : 0)
                   }
                   className="empty-state"
+                  tabIndex={0}
                 >
                   No matching assets found.
                 </td>
               </tr>
             ) : (
-              visibleData.map((item, index) => (
-                <tr key={startIndex + index}>
-                  {columns.map((column) => (
-                    <td
-                      key={String(column.accessorKey)}
-                    >
-                      {String(
-                        item[column.accessorKey] ?? ""
-                      )}
-                    </td>
-                  ))}
+              visibleData.map((item, rowIndex) => {
+                const isSelected =
+                  selectedItem === item;
 
-                  {onRowSelect && (
-                    <td>
-                      <button
-                        type="button"
-                        className="row-action"
-                        aria-label={`View asset ${String(
-                          item[columns[0].accessorKey]
-                        )}`}
-                        onClick={() => onRowSelect(item)}
-                      >
-                        View
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              ))
+                return (
+                  <tr
+                    key={String(
+                      item[columns[0].accessorKey]
+                    )}
+                    role="row"
+                    aria-rowindex={
+                      startIndex + rowIndex + 2
+                    }
+                    aria-selected={isSelected}
+                    className={
+                      isSelected ? "selected-row" : ""
+                    }
+                  >
+                    {columns.map((column, colIndex) => {
+                      const isFocused =
+                        safeFocusedCell.row === rowIndex &&
+                        safeFocusedCell.col === colIndex;
+
+                      return (
+                        <td
+                          key={String(column.accessorKey)}
+                          role="gridcell"
+                          data-cell={`${rowIndex}-${colIndex}`}
+                          tabIndex={isFocused ? 0 : -1}
+                          onFocus={() =>
+                            setFocusedCell({
+                              row: rowIndex,
+                              col: colIndex,
+                            })
+                          }
+                          onKeyDown={(event) =>
+                            handleCellKeyDown(
+                              event,
+                              rowIndex,
+                              colIndex,
+                              item
+                            )
+                          }
+                        >
+                          {String(
+                            item[column.accessorKey] ?? ""
+                          )}
+                        </td>
+                      );
+                    })}
+
+                    {onRowSelect && (
+                      <td role="gridcell">
+                        <button
+                          type="button"
+                          className="row-action"
+                          aria-label={`View asset ${String(
+                            item[columns[0].accessorKey]
+                          )}`}
+                          onClick={() =>
+                            onRowSelect(item)
+                          }
+                        >
+                          View
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -261,7 +438,7 @@ export function DataGrid<T extends object>({
             className="page-button"
             disabled={safePage === 1}
             onClick={() =>
-              setCurrentPage(safePage - 1)
+              changePage(safePage - 1)
             }
           >
             Previous
@@ -276,7 +453,7 @@ export function DataGrid<T extends object>({
             className="page-button"
             disabled={safePage === totalPages}
             onClick={() =>
-              setCurrentPage(safePage + 1)
+              changePage(safePage + 1)
             }
           >
             Next
@@ -284,10 +461,13 @@ export function DataGrid<T extends object>({
         </nav>
       </div>
 
-      <p className="sr-only" aria-live="polite">
-        Page {safePage} of {totalPages}.
-        Showing {visibleData.length} of{" "}
-        {sortedData.length} matching records.
+      <p
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {announcement}
       </p>
     </div>
   );
