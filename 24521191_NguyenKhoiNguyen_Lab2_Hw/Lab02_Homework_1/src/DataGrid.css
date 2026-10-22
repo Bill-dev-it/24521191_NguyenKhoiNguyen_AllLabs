@@ -409,3 +409,280 @@ h1 {
     border: 1px solid ButtonText;
   }
 }
+
+/* ========================================
+   STAGE 6 - RESPONSIVE DASHBOARD & DIALOG
+   ======================================== */
+
+/* System indicator */
+
+.system-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid #246c78;
+  border-radius: 8px;
+  color: #67e8f9;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.system-dot {
+  width: 9px;
+  height: 9px;
+  background: #34d399;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Responsive overview cards */
+
+.stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stat-card {
+  min-width: 0;
+}
+
+.stat-card small {
+  color: #b8c8dc;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Section heading */
+
+.section-kicker {
+  color: #67e8f9 !important;
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-top: 0;
+}
+
+/* Modal dialog */
+
+.asset-dialog {
+  width: min(520px, calc(100% - 32px));
+  max-height: min(700px, 85dvh);
+  overflow-y: auto;
+  padding: 0;
+  color: #e5edf8;
+  background: #111a2c;
+  border: 1px solid #526782;
+  border-radius: 16px;
+  box-shadow: 0 24px 80px #00000080;
+}
+
+.asset-dialog::backdrop {
+  background: #020617cc;
+  backdrop-filter: blur(5px);
+}
+
+.dialog-content {
+  padding: 28px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.dialog-eyebrow {
+  color: #67e8f9;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin: 0 0 12px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.dialog-header p:last-child {
+  color: #c2cee0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.dialog-close {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: #e5edf8;
+  background: #1c2a41;
+  border: 1px solid #64748b;
+  border-radius: 8px;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.dialog-close:hover {
+  background: #334155;
+}
+
+.dialog-divider {
+  height: 1px;
+  background: #34465f;
+  margin: 22px 0;
+}
+
+/* Accessible description list */
+
+.asset-details {
+  display: grid;
+  gap: 18px;
+  margin: 0;
+}
+
+.detail-item {
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+
+.detail-item dt {
+  color: #b8c8dc;
+  font-size: 13px;
+}
+
+.detail-item dd {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Asset status badges */
+
+.asset-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-active {
+  color: #a7f3d0;
+  background: #064e3b;
+  border: 1px solid #34d399;
+}
+
+.status-maintenance {
+  color: #fde68a;
+  background: #78350f;
+  border: 1px solid #fbbf24;
+}
+
+.status-inactive {
+  color: #fecaca;
+  background: #7f1d1d;
+  border: 1px solid #f87171;
+}
+
+/* Dialog actions */
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #34465f;
+}
+
+.dialog-done {
+  min-height: 44px;
+  padding: 11px 22px;
+  border-radius: 8px;
+  border: 1px solid #67e8f9;
+  background: #164e63;
+  color: #e0faff;
+  font-weight: 600;
+}
+
+.dialog-done:hover {
+  background: #155e75;
+}
+
+.dialog-close:focus-visible,
+.dialog-done:focus-visible {
+  outline: 3px solid #67e8f9;
+  outline-offset: 3px;
+}
+
+/* Dashboard footer */
+
+.dashboard-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #34465f;
+  color: #b8c8dc;
+  font-size: 12px;
+}
+
+/* Tablet */
+
+@media (max-width: 1000px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dialog-content {
+    padding: 20px;
+  }
+
+  .dialog-header h2 {
+    font-size: 20px;
+  }
+
+  .detail-item {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .dashboard-bottom {
+    flex-direction: column;
+  }
+}
+
+/* Forced colors / high contrast */
+
+@media (forced-colors: active) {
+  .asset-dialog {
+    border: 2px solid CanvasText;
+  }
+
+  .asset-status {
+    border: 1px solid CanvasText;
+  }
+
+  .dialog-close,
+  .dialog-done {
+    border: 1px solid ButtonText;
+  }
+}
