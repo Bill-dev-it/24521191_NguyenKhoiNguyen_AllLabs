@@ -365,6 +365,82 @@ export class InventoryEngine {
   }
 
   // -----------------------------------------
+  // CHECKOUT COMMIT TRANSITION
+  // -----------------------------------------
+
+  /**
+   * Atomically converts reserved stock into sold stock
+   * within this in-memory InventoryEngine instance.
+   *
+   * Inventory invariant:
+   * available + reserved + sold = initialStock
+   */
+  commitReservation(
+    reservationId: string
+  ): InventoryResult<StockReservation> {
+    // Revalidate expiration at transaction time.
+    this.expireReservations();
+
+    const reservation = this.reservations.get(reservationId);
+
+    if (!reservation) {
+      return {
+        success: false,
+        code: "RESERVATION_NOT_FOUND",
+        message: "Reservation does not exist",
+      };
+    }
+
+    if (reservation.status === "expired") {
+      return {
+        success: false,
+        code: "RESERVATION_EXPIRED",
+        message: "Reservation lock has expired",
+      };
+    }
+
+    if (reservation.status !== "reserved") {
+      return {
+        success: false,
+        code: "INVALID_TRANSITION",
+        message:
+          `Cannot checkout a ${reservation.status} reservation`,
+      };
+    }
+
+    const product = this.products.get(reservation.productId);
+
+    if (!product) {
+      throw new Error("Product missing during checkout");
+    }
+
+    if (product.reservedQuantity < reservation.quantity) {
+      throw new Error("Reserved inventory is inconsistent");
+    }
+
+    // Commit without deducting available stock again.
+    reservation.status = "committed";
+
+    product.reservedQuantity -= reservation.quantity;
+    product.soldQuantity += reservation.quantity;
+    product.version++;
+
+    this.log(
+      "COMMITTED",
+      product.id,
+      `Reservation ${reservationId} committed successfully`,
+      reservationId
+    );
+
+    this.assertStockInvariant(product);
+
+    return {
+      success: true,
+      data: { ...reservation },
+    };
+  }
+
+  // -----------------------------------------
   // INVARIANT VALIDATION
   // -----------------------------------------
 

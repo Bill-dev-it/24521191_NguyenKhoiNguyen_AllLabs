@@ -56,6 +56,7 @@ export type InventoryErrorCode =
   | "INVALID_QUANTITY"
   | "INSUFFICIENT_STOCK"
   | "RESERVATION_NOT_FOUND"
+  | "RESERVATION_EXPIRED"
   | "INVALID_TRANSITION";
 
 export type InventoryResult<T> =
