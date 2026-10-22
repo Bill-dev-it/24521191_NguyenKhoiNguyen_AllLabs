@@ -32,7 +32,8 @@ export class AudioLoader {
     options: AudioLoaderOptions = {}
   ) {
     this.decoder = decoder;
-    this.fetcher = options.fetcher ?? fetch;
+    this.fetcher =
+      options.fetcher ?? window.fetch.bind(window);
     this.maxFileSize =
       options.maxFileSize ?? DEFAULT_MAX_FILE_SIZE;
   }
