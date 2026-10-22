@@ -148,6 +148,9 @@ export default function AudioVisualizer({
     engine?.getFFTSize() ?? 256
   );
   const [fps, setFps] = useState(0);
+  const [playbackStatus, setPlaybackStatus] = useState(
+    engine?.getStatus() ?? "idle"
+  );
 
   function changeFFTSize(value: FFTSize) {
     try {
@@ -157,6 +160,14 @@ export default function AudioVisualizer({
       console.error("Unable to change FFT size", error);
     }
   }
+
+  useEffect(() => {
+    if (!engine) return;
+
+    return engine.subscribe((snapshot) => {
+      setPlaybackStatus(snapshot.status);
+    });
+  }, [engine]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -274,7 +285,7 @@ export default function AudioVisualizer({
 
         <span className="visualizer-live">
           <span aria-hidden="true">●</span>
-          {engine?.getStatus() === "playing"
+          {playbackStatus === "playing"
             ? "LIVE AUDIO"
             : "STANDBY"}
         </span>

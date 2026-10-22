@@ -1,5 +1,10 @@
 
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { AudioEngine } from "./audio-engine";
 import { AudioLoader } from "./audio-loader";
 import { AudioTaskQueue } from "./audio-queue-controller";
@@ -86,6 +91,26 @@ const EMPTY_SNAPSHOT: AudioQueueSnapshot = {
   isProcessing: false,
 };
 
+function createAudioEngineStore() {
+  let engine: AudioEngine | null = null;
+  const listeners = new Set<() => void>();
+
+  return {
+    getSnapshot: () => engine,
+    subscribe: (listener: () => void) => {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    set: (nextEngine: AudioEngine | null) => {
+      if (engine === nextEngine) return;
+      engine = nextEngine;
+      listeners.forEach((listener) => listener());
+    },
+  };
+}
+
 export default function App() {
   const engineRef = useRef<AudioEngine | null>(null);
   const queueRef = useRef<AudioTaskQueue<AudioBuffer> | null>(null);
@@ -95,7 +120,12 @@ export default function App() {
     new Map<string, AudioTaskHandle<AudioBuffer>>()
   );
 
-  const [engine] = useState<AudioEngine>(() => new AudioEngine());
+  const [engineStore] = useState(createAudioEngineStore);
+  const engine = useSyncExternalStore(
+    engineStore.subscribe,
+    engineStore.getSnapshot,
+    engineStore.getSnapshot
+  );
   const [snapshot, setSnapshot] =
     useState<AudioQueueSnapshot>(EMPTY_SNAPSHOT);
 
@@ -116,10 +146,11 @@ export default function App() {
 
   // Initialize independent queue and playback engine.
   useEffect(() => {
-    const audioEngine = engine;
+    const audioEngine = new AudioEngine();
     const urls = urlsRef.current;
     const handles = handlesRef.current;
     engineRef.current = audioEngine;
+    engineStore.set(audioEngine);
 
     let active = true;
 
@@ -157,6 +188,7 @@ export default function App() {
       queue.dispose();
       queueRef.current = null;
       engineRef.current = null;
+      engineStore.set(null);
 
       for (const url of urls) {
         URL.revokeObjectURL(url);
@@ -172,7 +204,7 @@ export default function App() {
 
       void audioEngine.dispose();
     };
-  }, [engine]);
+  }, [engineStore]);
 
   function enqueueAudio(url: string, title: string) {
     const queue = queueRef.current;
