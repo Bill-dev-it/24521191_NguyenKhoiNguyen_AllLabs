@@ -1,5 +1,5 @@
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { InventoryEngine } from "./inventory-engine";
 import type { ProductInput } from "./inventory-types";
 
@@ -277,3 +277,258 @@ describe("FlashVault Inventory State Machine", () => {
     ]);
   });
 });
+
+
+describe("FlashVault Reservation Lock Expiration", () => {
+  function setupLockEngine() {
+    let currentTime = 100_000;
+    let sequence = 0;
+
+    const engine = new InventoryEngine(
+      [
+        {
+          id: "LOCK-01",
+          name: "Flash Sale Product",
+          originalPrice: 2000000,
+          salePrice: 990000,
+          initialStock: 5,
+        },
+      ],
+      {
+        now: () => currentTime,
+        createId: () => `lock-${++sequence}`,
+      }
+    );
+
+    return {
+      engine,
+      advanceBy(ms: number) {
+        currentTime += ms;
+      },
+    };
+  }
+
+  it("keeps a reservation active before expiration", () => {
+    const clock = setupLockEngine();
+
+    const result = clock.engine.reserve(
+      "LOCK-01",
+      "buyer-a",
+      2,
+      30_000
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    clock.advanceBy(29_999);
+
+    expect(
+      clock.engine.isReservationActive(result.data.id)
+    ).toBe(true);
+
+    expect(
+      clock.engine.getRemainingLockMs(result.data.id)
+    ).toBe(1);
+
+    expect(clock.engine.expireReservations()).toBe(0);
+    expect(clock.engine.validateInvariants()).toBe(true);
+  });
+
+  it("expires a lock exactly at its deadline", () => {
+    const clock = setupLockEngine();
+
+    const result = clock.engine.reserve(
+      "LOCK-01",
+      "buyer-a",
+      2,
+      30_000
+    );
+
+    if (!result.success) {
+      throw new Error("Reservation setup failed");
+    }
+
+    clock.advanceBy(30_000);
+
+    expect(
+      clock.engine.isReservationActive(result.data.id)
+    ).toBe(false);
+
+    expect(clock.engine.expireReservations()).toBe(1);
+
+    expect(
+      clock.engine.getReservation(result.data.id)?.status
+    ).toBe("expired");
+
+    expect(clock.engine.getProduct("LOCK-01")).toMatchObject({
+      availableStock: 5,
+      reservedQuantity: 0,
+      soldQuantity: 0,
+    });
+  });
+
+  it("does not release an expired lock twice", () => {
+    const clock = setupLockEngine();
+
+    const result = clock.engine.reserve(
+      "LOCK-01",
+      "buyer-a",
+      3,
+      1000
+    );
+
+    if (!result.success) {
+      throw new Error("Reservation setup failed");
+    }
+
+    clock.advanceBy(1500);
+
+    expect(clock.engine.expireReservations()).toBe(1);
+    expect(clock.engine.expireReservations()).toBe(0);
+
+    expect(clock.engine.getProduct("LOCK-01")).toMatchObject({
+      availableStock: 5,
+      reservedQuantity: 0,
+      version: 2,
+    });
+  });
+
+  it("reuses released stock in the next reservation", () => {
+    const clock = setupLockEngine();
+
+    const first = clock.engine.reserve(
+      "LOCK-01",
+      "buyer-a",
+      5,
+      1000
+    );
+
+    expect(first.success).toBe(true);
+
+    clock.advanceBy(1001);
+
+    // reserve() automatically sweeps expired locks.
+    const second = clock.engine.reserve(
+      "LOCK-01",
+      "buyer-b",
+      5,
+      30_000
+    );
+
+    expect(second.success).toBe(true);
+
+    expect(clock.engine.getProduct("LOCK-01")).toMatchObject({
+      availableStock: 0,
+      reservedQuantity: 5,
+      soldQuantity: 0,
+    });
+
+    expect(clock.engine.validateInvariants()).toBe(true);
+  });
+
+  it("rejects cancellation after expiration", () => {
+    const clock = setupLockEngine();
+
+    const result = clock.engine.reserve(
+      "LOCK-01",
+      "buyer-a",
+      1,
+      1000
+    );
+
+    if (!result.success) {
+      throw new Error("Reservation setup failed");
+    }
+
+    clock.advanceBy(2000);
+
+    expect(clock.engine.cancel(result.data.id)).toMatchObject({
+      success: false,
+      code: "INVALID_TRANSITION",
+    });
+
+    expect(clock.engine.getProduct("LOCK-01")?.availableStock)
+      .toBe(5);
+  });
+
+  it("does not expire already cancelled locks", () => {
+    const clock = setupLockEngine();
+
+    const result = clock.engine.reserve(
+      "LOCK-01",
+      "buyer-a",
+      2,
+      1000
+    );
+
+    if (!result.success) {
+      throw new Error("Reservation setup failed");
+    }
+
+    clock.engine.cancel(result.data.id);
+    clock.advanceBy(5000);
+
+    expect(clock.engine.expireReservations()).toBe(0);
+    expect(clock.engine.getProduct("LOCK-01")).toMatchObject({
+      availableStock: 5,
+      reservedQuantity: 0,
+    });
+  });
+
+  it("expires multiple locks without violating stock balance", () => {
+    const clock = setupLockEngine();
+
+    clock.engine.reserve("LOCK-01", "buyer-a", 2, 1000);
+    clock.engine.reserve("LOCK-01", "buyer-b", 2, 1000);
+
+    clock.advanceBy(1000);
+
+    expect(clock.engine.expireReservations()).toBe(2);
+
+    expect(clock.engine.getProduct("LOCK-01")).toMatchObject({
+      availableStock: 5,
+      reservedQuantity: 0,
+      soldQuantity: 0,
+    });
+
+    expect(clock.engine.validateInvariants()).toBe(true);
+  });
+
+  it("releases expired locks using the automatic monitor", async () => {
+    const clock = setupLockEngine();
+
+    vi.useFakeTimers();
+
+    try {
+      const result = clock.engine.reserve(
+        "LOCK-01",
+        "buyer-a",
+        2,
+        1000
+      );
+
+      expect(result.success).toBe(true);
+
+      clock.engine.startExpiryMonitor(100);
+
+      // Simulated business clock advances separately.
+      clock.advanceBy(1000);
+
+      await vi.advanceTimersByTimeAsync(100);
+
+      expect(clock.engine.getProduct("LOCK-01")).toMatchObject({
+        availableStock: 5,
+        reservedQuantity: 0,
+      });
+
+      clock.engine.dispose();
+
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      clock.engine.dispose();
+      vi.useRealTimers();
+    }
+  });
+});
+

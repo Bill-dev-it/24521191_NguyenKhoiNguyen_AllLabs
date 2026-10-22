@@ -20,6 +20,8 @@ export class InventoryEngine {
   private readonly now: () => number;
   private readonly createId: () => string;
 
+  private expiryMonitor: ReturnType<typeof setInterval> | null = null;
+
   constructor(
     products: ProductInput[],
     dependencies: InventoryDependencies = {}
@@ -41,7 +43,9 @@ export class InventoryEngine {
         !Number.isSafeInteger(product.initialStock) ||
         product.initialStock < 0
       ) {
-        throw new Error("Initial stock must be a non-negative integer");
+        throw new Error(
+          "Initial stock must be a non-negative integer"
+        );
       }
 
       if (
@@ -50,7 +54,9 @@ export class InventoryEngine {
         product.originalPrice < 0 ||
         product.salePrice < 0
       ) {
-        throw new Error("Product prices must be non-negative");
+        throw new Error(
+          "Product prices must be non-negative"
+        );
       }
 
       this.products.set(product.id, {
@@ -63,9 +69,9 @@ export class InventoryEngine {
     }
   }
 
-  // ----------------------------------------
-  // Read-only public snapshots
-  // ----------------------------------------
+  // -----------------------------------------
+  // READ-ONLY SNAPSHOTS
+  // -----------------------------------------
 
   getProduct(id: string): InventoryProduct | null {
     const product = this.products.get(id);
@@ -89,9 +95,9 @@ export class InventoryEngine {
     };
   }
 
-  // ----------------------------------------
-  // Reservation transition
-  // ----------------------------------------
+  // -----------------------------------------
+  // RESERVE INVENTORY
+  // -----------------------------------------
 
   reserve(
     productId: string,
@@ -99,6 +105,9 @@ export class InventoryEngine {
     quantity = 1,
     durationMs = DEFAULT_RESERVATION_MS
   ): InventoryResult<StockReservation> {
+    // Release expired locks before checking stock.
+    this.expireReservations();
+
     const product = this.products.get(productId);
 
     if (!product) {
@@ -143,6 +152,7 @@ export class InventoryEngine {
     }
 
     const timestamp = this.now();
+
     const reservation: StockReservation = {
       id: this.createId(),
       productId,
@@ -153,7 +163,6 @@ export class InventoryEngine {
       expiresAt: timestamp + durationMs,
     };
 
-    // All stock changes occur synchronously in one method.
     product.availableStock -= quantity;
     product.reservedQuantity += quantity;
     product.version++;
@@ -175,13 +184,16 @@ export class InventoryEngine {
     };
   }
 
-  // ----------------------------------------
-  // Manual cancellation transition
-  // ----------------------------------------
+  // -----------------------------------------
+  // CANCEL RESERVATION
+  // -----------------------------------------
 
   cancel(
     reservationId: string
   ): InventoryResult<StockReservation> {
+    // Expired locks must not be cancelled again.
+    this.expireReservations();
+
     const reservation = this.reservations.get(reservationId);
 
     if (!reservation) {
@@ -196,7 +208,8 @@ export class InventoryEngine {
       return {
         success: false,
         code: "INVALID_TRANSITION",
-        message: `Cannot cancel a ${reservation.status} reservation`,
+        message:
+          `Cannot cancel a ${reservation.status} reservation`,
       };
     }
 
@@ -227,14 +240,137 @@ export class InventoryEngine {
     };
   }
 
-  // ----------------------------------------
-  // Stock conservation validation
-  // ----------------------------------------
+  // -----------------------------------------
+  // EXPIRE RESERVATIONS
+  // -----------------------------------------
+
+  /**
+   * Expires every overdue reservation.
+   *
+   * Uses absolute expiresAt deadlines, not
+   * accumulated interval ticks.
+   *
+   * Returns the number of newly expired locks.
+   */
+  expireReservations(): number {
+    const timestamp = this.now();
+    let expiredCount = 0;
+
+    for (const reservation of this.reservations.values()) {
+      if (
+        reservation.status !== "reserved" ||
+        timestamp < reservation.expiresAt
+      ) {
+        continue;
+      }
+
+      const product = this.products.get(reservation.productId);
+
+      if (!product) {
+        throw new Error(
+          "Product missing for active reservation"
+        );
+      }
+
+      reservation.status = "expired";
+
+      product.reservedQuantity -= reservation.quantity;
+      product.availableStock += reservation.quantity;
+      product.version++;
+
+      this.log(
+        "EXPIRED",
+        product.id,
+        `Reservation ${reservation.id} expired`,
+        reservation.id
+      );
+
+      this.assertStockInvariant(product);
+      expiredCount++;
+    }
+
+    return expiredCount;
+  }
+
+  /**
+   * Start a single expiry-monitor interval.
+   *
+   * This is a maintenance scheduler, not the
+   * source of truth for lock expiry.
+   */
+  startExpiryMonitor(intervalMs = 250): void {
+    if (
+      !Number.isFinite(intervalMs) ||
+      intervalMs < 10
+    ) {
+      throw new RangeError(
+        "Expiry monitor interval must be >= 10 ms"
+      );
+    }
+
+    if (this.expiryMonitor !== null) {
+      return;
+    }
+
+    this.expiryMonitor = setInterval(() => {
+      this.expireReservations();
+    }, intervalMs);
+  }
+
+  stopExpiryMonitor(): void {
+    if (this.expiryMonitor === null) {
+      return;
+    }
+
+    clearInterval(this.expiryMonitor);
+    this.expiryMonitor = null;
+  }
+
+  // -----------------------------------------
+  // LOCK STATUS
+  // -----------------------------------------
+
+  isReservationActive(reservationId: string): boolean {
+    const reservation = this.reservations.get(reservationId);
+
+    return Boolean(
+      reservation &&
+      reservation.status === "reserved" &&
+      this.now() < reservation.expiresAt
+    );
+  }
+
+  getRemainingLockMs(reservationId: string): number {
+    const reservation = this.reservations.get(reservationId);
+
+    if (
+      !reservation ||
+      reservation.status !== "reserved"
+    ) {
+      return 0;
+    }
+
+    return Math.max(
+      0,
+      reservation.expiresAt - this.now()
+    );
+  }
+
+  /**
+   * Stops monitor scheduling.
+   * The engine's snapshot remains readable.
+   */
+  dispose(): void {
+    this.stopExpiryMonitor();
+  }
+
+  // -----------------------------------------
+  // INVARIANT VALIDATION
+  // -----------------------------------------
 
   validateInvariants(): boolean {
     return [...this.products.values()].every(
-      (product) =>
-        this.isStockInvariantValid(product)
+      (product) => this.isStockInvariantValid(product)
     );
   }
 
@@ -262,9 +398,9 @@ export class InventoryEngine {
     }
   }
 
-  // ----------------------------------------
-  // Event logging
-  // ----------------------------------------
+  // -----------------------------------------
+  // EVENT LOG
+  // -----------------------------------------
 
   private log(
     type: InventoryEventType,
