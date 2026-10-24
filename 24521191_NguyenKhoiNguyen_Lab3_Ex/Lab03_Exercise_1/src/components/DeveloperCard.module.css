@@ -1,31 +1,267 @@
 
+/*
+ * Lab03 Exercise 1 — DeveloperCard CSS Module
+ * Architecture: Mobile-First
+ * Checkpoints: 6A + 6B + 7A
+ * Baseline: 320px–375px
+ */
+
+/* 1. Card foundation and design tokens */
 .card {
+  --card-bg: #151e30;
+  --card-border: #364963;
+  --text-main: #f1f5ff;
+  --text-muted: #b5c6dc;
+  --accent: #25d5b3;
+  --card-radius: 16px;
+
+  width: 100%;
   max-width: 780px;
+  min-width: 0;
+  margin-inline: auto;
+  padding: 16px;
+
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
 }
 
+/* 2. Profile header */
 .header {
   display: flex;
-  gap: 1rem;
-  align-items: center;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
 }
 
 .avatar,
 .avatarFallback {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 50%;
+}
+
+.avatar {
+  object-fit: cover;
+  border: 2px solid var(--accent);
 }
 
 .avatarFallback {
   display: grid;
   place-items: center;
+  background-color: #21463f;
+  font-size: 17px;
+  font-weight: 800;
 }
 
+.header hgroup {
+  min-width: 0;
+}
+
+.header h2 {
+  margin: 0 0 6px;
+  color: var(--text-main);
+  font-size: 1.2rem;
+  line-height: 1.3;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.header hgroup p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* 3. Metadata definition list */
 .metrics {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+  gap: 12px;
+  margin: 20px 0;
+  padding: 14px;
+  background-color: #1d2b42;
+  border-radius: 12px;
 }
 
+.metrics dt {
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
+}
+
+.metrics dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* 4. Skills section */
+.card section {
+  margin-top: 20px;
+}
+
+.card section h3 {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+/* 5. Reusable skill badges */
 .skills {
-  padding-left: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.skills li {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  gap: 4px;
+
+  padding: 9px 11px;
+  border: 1px solid #3d6883;
+  border-radius: 9px;
+  background-color: #20334b;
+
+  color: var(--text-main);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.skills li strong {
+  color: #7cdeff;
+}
+
+
+
+/* =========================================
+   Checkpoint 7B — Tablet Enhancement
+   Mobile-first breakpoint: 768px
+   ========================================= */
+
+@media (min-width: 768px) {
+  .card {
+    padding: 28px;
+    border-radius: 20px;
+  }
+
+  .header {
+    align-items: center;
+    gap: 20px;
+  }
+
+  .avatar,
+  .avatarFallback {
+    width: 64px;
+    height: 64px;
+    flex-basis: 64px;
+  }
+
+  .header h2 {
+    font-size: 1.75rem;
+  }
+
+  .header hgroup p {
+    font-size: 0.9rem;
+  }
+
+  .metrics {
+    padding: 20px;
+    margin: 24px 0;
+    gap: 16px;
+  }
+
+  .metrics dt,
+  .metrics dd {
+    font-size: 0.95rem;
+  }
+
+  .skills {
+    gap: 12px;
+  }
+
+  .skills li {
+    padding: 11px 14px;
+    font-size: 0.85rem;
+  }
+}
+
+
+/* =========================================
+   Checkpoint 7C — Desktop Enhancement
+   Breakpoint: 1024px and above
+   ========================================= */
+
+@media (min-width: 1024px) {
+  .card {
+    max-width: 780px;
+    padding: 36px;
+    border-radius: 24px;
+  }
+
+  .header {
+    gap: 24px;
+  }
+
+  .avatar,
+  .avatarFallback {
+    width: 72px;
+    height: 72px;
+    flex-basis: 72px;
+  }
+
+  .header h2 {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .header hgroup p {
+    font-size: 1rem;
+  }
+
+  .metrics {
+    margin: 28px 0;
+    padding: 24px;
+    gap: 18px;
+  }
+
+  .metrics dt,
+  .metrics dd {
+    font-size: 1rem;
+  }
+
+  .card section {
+    margin-top: 28px;
+  }
+
+  .card section h3 {
+    font-size: 1.25rem;
+  }
+
+  .skills {
+    gap: 12px;
+  }
+
+  .skills li {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
 }

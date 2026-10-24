@@ -1,0 +1,31 @@
+
+/* Global design foundation */
+
+:root {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: #f1f5ff;
+  background-color: #0b1120;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+}
+
+body {
+  min-width: 0;
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+}

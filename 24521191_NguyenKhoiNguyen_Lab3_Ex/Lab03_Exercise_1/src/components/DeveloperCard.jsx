@@ -3,8 +3,8 @@ import { Fragment, useId, useState } from "react";
 import SkillBadge from "./SkillBadge";
 import styles from "./DeveloperCard.module.css";
 
-export default function DeveloperCard({
-  fullName = "Tran Vinh Khiem",
+export function DeveloperCard({
+  fullName = "Nguyen Khoi Nguyen",
   role = "Senior Systems Architect • UIT SS3T",
   avatarUrl =
     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240",

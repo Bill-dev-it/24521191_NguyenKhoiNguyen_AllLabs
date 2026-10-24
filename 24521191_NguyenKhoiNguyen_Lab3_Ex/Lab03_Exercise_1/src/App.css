@@ -1,0 +1,82 @@
+
+/* App shell — Mobile First */
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+main {
+  width: 100%;
+  max-width: 1120px;
+  min-width: 0;
+  margin-inline: auto;
+  padding: 24px 12px;
+}
+
+main > header {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto 24px;
+}
+
+main > header > p:first-child {
+  margin: 0;
+  color: #25d5b3;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  overflow-wrap: anywhere;
+}
+
+main > header h1 {
+  margin: 12px 0;
+  font-size: 1.55rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+main > header > p:last-child {
+  margin: 0;
+  color: #b5c6dc;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+
+
+/* =========================================
+   Tablet & Desktop App Shell
+   ========================================= */
+
+@media (min-width: 768px) {
+  main {
+    padding: 48px 32px;
+  }
+
+  main > header {
+    margin-bottom: 36px;
+  }
+
+  main > header h1 {
+    font-size: 2.25rem;
+  }
+
+  main > header > p:last-child {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  main {
+    padding: 64px 40px;
+  }
+
+  main > header {
+    margin-bottom: 42px;
+  }
+
+  main > header h1 {
+    font-size: 2.75rem;
+  }
+}

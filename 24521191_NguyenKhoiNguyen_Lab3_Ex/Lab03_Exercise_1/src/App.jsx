@@ -1,5 +1,5 @@
 
-import DeveloperCard from "./components/DeveloperCard";
+import { DeveloperCard } from "./components/DeveloperCard";
 import "./App.css";
 
 export default function App() {
@@ -15,7 +15,7 @@ export default function App() {
       </header>
 
       <DeveloperCard
-        fullName="Tran Vinh Khiem"
+        fullName="Nguyen Khoi Nguyen"
         role="Software Engineer • Competitive Gamer"
         metrics={{
           projects: 24,
