@@ -1,0 +1,162 @@
+.telemetry {
+  width: min(100%, 920px);
+  margin-inline: auto;
+  min-width: 0;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.625rem;
+  color: #86b8ff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 6vw, 2.8rem);
+  line-height: 1.15;
+}
+
+.subtitle,
+.message {
+  color: #b9c9e3;
+  line-height: 1.6;
+}
+
+.skeleton {
+  height: 220px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border: 1px solid #3d70a4;
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at center, #173c60, #101c32 72%);
+}
+
+.skeleton p {
+  margin: 0;
+  color: #d4eaff;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.radar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 110px;
+  height: 110px;
+}
+
+.radarRing {
+  position: absolute;
+  inset: 8px;
+  border: 2px solid #64baff;
+  border-radius: 50%;
+  box-shadow: 0 0 22px #2673c7;
+  animation: blueZonePulse 1.5s ease-in-out infinite;
+}
+
+.radarCore {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #a8deff;
+  box-shadow: 0 0 18px #64baff;
+}
+
+.result,
+.error {
+  min-height: 220px;
+  padding: 1.25rem;
+  border: 1px solid #344765;
+  border-radius: 1rem;
+  background: #151e31;
+}
+
+.resultHeader h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+}
+
+.resultHeader p:last-child {
+  color: #bfd0e6;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+}
+
+.stats div {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid #344765;
+  border-radius: 0.65rem;
+}
+
+.stats dt {
+  color: #aabfdd;
+  font-size: 0.75rem;
+}
+
+.stats dd {
+  margin: 0.35rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.error {
+  border-color: #a85268;
+  background: #321d2a;
+}
+
+.error h2 {
+  margin-top: 0;
+  color: #ffd0da;
+}
+
+.error p {
+  overflow-wrap: anywhere;
+}
+
+@keyframes blueZonePulse {
+  0%, 100% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  .result,
+  .error {
+    padding: 2rem;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radarRing {
+    animation: none;
+  }
+}
