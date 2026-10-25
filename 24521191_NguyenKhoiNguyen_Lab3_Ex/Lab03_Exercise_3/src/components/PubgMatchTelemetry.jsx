@@ -8,11 +8,13 @@ const INITIAL_VIEW = {
   error: null,
 };
 
-export function PubgMatchTelemetry({
-  squadId = "te",
-  retryTick = 0,
-}) {
+export function PubgMatchTelemetry({ squadId = "te" }) {
   const [view, setView] = useState(INITIAL_VIEW);
+  const [retryTick, setRetryTick] = useState(0);
+
+  const handleRetry = () => {
+    setRetryTick((previous) => previous + 1);
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -60,7 +62,7 @@ export function PubgMatchTelemetry({
         void loadTelemetry();
       }
     });
-
+    return () => {
     return () => {
       controller.abort();
     };
@@ -139,11 +141,17 @@ export function PubgMatchTelemetry({
 
       {view.status === "ERROR" && (
         <section className={styles.error} role="alert">
-          <h2>Satellite Connection Lost</h2>
+          <h2>Blue-Zone Link Lost</h2>
+
           <p>{view.error}</p>
-          <p>
-            Reconnect controls will be added in Stage 2.
-          </p>
+
+          <button
+            type="button"
+            className={styles.retryButton}
+            onClick={handleRetry}
+          >
+            Reconnect Satellite (Retry)
+          </button>
         </section>
       )}
     </section>

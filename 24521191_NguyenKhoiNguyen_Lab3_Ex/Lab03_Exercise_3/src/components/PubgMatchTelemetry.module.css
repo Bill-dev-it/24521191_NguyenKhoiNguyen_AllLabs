@@ -160,3 +160,36 @@
     animation: none;
   }
 }
+
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #f1a3b3;
+  border-radius: 0.7rem;
+  background: #7c2844;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.retryButton:hover {
+  background: #9a3755;
+}
+
+.retryButton:focus-visible {
+  outline: 3px solid #8dc7ff;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retryButton {
+    transition: none;
+  }
+}

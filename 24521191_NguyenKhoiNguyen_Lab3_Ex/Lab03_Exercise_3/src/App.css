@@ -3,8 +3,53 @@
   padding: 1.5rem 1rem 3rem;
 }
 
+.dashboard {
+  width: min(100%, 920px);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.squadSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1rem;
+  border: 1px solid #344765;
+  border-radius: 1rem;
+  background: #151e31;
+}
+
+.squadSelector label {
+  font-weight: 700;
+  color: #c8dcff;
+}
+
+.squadSelector select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.8rem 1rem;
+  border: 1px solid #50709e;
+  border-radius: 0.65rem;
+  background: #0b1020;
+  color: #eaf1ff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.squadSelector select:focus-visible {
+  outline: 3px solid #8dc7ff;
+  outline-offset: 2px;
+}
+
 @media (min-width: 768px) {
   .appShell {
     padding: 3rem 2rem;
+  }
+
+  .squadSelector {
+    padding: 1.25rem;
   }
 }
