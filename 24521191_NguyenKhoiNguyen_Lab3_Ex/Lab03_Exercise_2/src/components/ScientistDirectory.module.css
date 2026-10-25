@@ -168,3 +168,67 @@
     transition: none;
   }
 }
+
+
+
+/* Stage 3 — Actions and Accessible Live Status */
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.status {
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.resetButton,
+.deleteButton {
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.625rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resetButton {
+  background: #253455;
+  color: #edf2ff;
+}
+
+.deleteButton {
+  width: 100%;
+  margin-top: 1.25rem;
+  background: #401e2b;
+  border-color: #a14f64;
+  color: #ffe1e7;
+}
+
+.resetButton:hover {
+  background: #34466d;
+}
+
+.deleteButton:hover {
+  background: #5b2738;
+}
+
+.resetButton:focus-visible,
+.deleteButton:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .toolbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

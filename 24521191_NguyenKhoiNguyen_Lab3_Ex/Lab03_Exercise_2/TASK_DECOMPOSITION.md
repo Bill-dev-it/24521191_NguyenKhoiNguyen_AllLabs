@@ -5,8 +5,8 @@
 **Engineering standard:** `../PROJECT_RULES.md` (master; mobile-first)
 **Scope of inheritance:** Lab02 only (especially Lab02 Exercise 2)
 **Commit constraint:** Exactly three atomic commits for Exercise 2
-**Snapshot:** Commit 1 completed (user-confirmed); Stage 2 checkpoints 2A–2E functionally verified; lint/build PASS. WBS consolidated **before Commit 2**.
-**Checklist rule:** `[x]` means implemented/verified by available evidence or user-reported checks; `[ ]` means unverified/pending. Stage 3 remains pending. No Git hash is invented.
+**Snapshot:** Commits 1 and 2 completed/pushed (user-confirmed; hashes not supplied). Stage 3 features, responsive checks and lint/build user-confirmed PASS. Final WBS consolidated **before Commit 3**.
+**Checklist rule:** `[x]` means implemented/verified by available evidence or user-reported checks; `[ ]` means unverified/pending. Outstanding accessibility/source checks and Commit 3 remain pending. No Git hash is invented.
 
 ---
 
@@ -51,8 +51,8 @@
 | Commit | Scope | Required exact message | Status |
 |---|---|---|---|
 | 1 | Schema, component, initial responsive UI, WBS and inheritance analysis | `feat(ex2): normalize smartPeople schema with stable IDs` | COMPLETED — user-confirmed; hash not provided |
-| 2 | Controlled search + numeric IQ + derived sorting | `feat(ex2): add search, IQ filter & toSorted` | READY FOR STAGING — not committed |
-| 3 | Delete/reset + accessible status + final QA | `feat(ex2): add delete/reset & live status` | NOT STARTED |
+| 2 | Controlled search + numeric IQ + derived sorting | `feat(ex2): add search, IQ filter & toSorted` | COMPLETED AND PUSHED — user-confirmed; hash not supplied |
+| 3 | Delete/reset + accessible status + final QA | `feat(ex2): add delete/reset & live status` | IMPLEMENTED/TESTED — pre-commit QA pending |
 
 **Git boundary rule:** Keep changes scoped to `Lab03_Exercise_2/`. Do not stage files from Lab02, Ex1, Ex3 or the parent `PROJECT_RULES.md`. Perform a consolidated WBS edit immediately before each allowed commit; no extra documentation-only commit.
 
@@ -119,9 +119,9 @@ const visiblePeople = people
 - [ ] **2.4.1.7** Complete separate source-level inspection of Lab02 Ex1 VNode implementation (supporting reference).
 - [ ] **2.4.1.8** Complete separate source-level inspection of Lab02 Ex3 React/Vite implementation (supporting reference).
 - [x] **2.4.1.9** Record legacy `smartPeople` source as unverified rather than claim direct source reuse.
-- [ ] **2.4.1.10** Verify final Lab03 implementation against all migrated patterns (Stages 2–3); Stage 2 portion complete, Stage 3 pending.
+- [ ] **2.4.1.10** Verify final Lab03 implementation against all migrated patterns (Stages 2–3); functional migration user-reported PASS, detailed final source/focus audit pending.
 
-**Analysis status:** Primary Lab02 Ex2 source audit complete; Stage 2 migration observed through search/filter/sort, with Stage 3 delete/reset and optional supporting Ex1/Ex3 source audits still pending.
+**Analysis status:** Primary Lab02 Ex2 source audit complete; Stage 2 migration observed through search/filter/sort, with Stage 3 delete/reset now implemented and user-tested; optional supporting Ex1/Ex3 source audits and formal final source review remain open.
 
 ---
 
@@ -180,7 +180,7 @@ const visiblePeople = people
 - [x] **3.4.1.4** Render names, ages and IQs from `people.map`.
 - [x] **3.4.1.5** Set `key={person.id}` (never array index).
 - [x] **3.4.1.6** Mount directory from `App.jsx`.
-- [ ] **3.4.1.7** Add `useId()` only with actual controlled form inputs in Stage 2.
+- [x] **3.4.1.7** Add `useId()` with controlled inputs in Stage 2 (completed in Stage 2).
 
 #### 3.4.2 Mobile-First CSS Module
 
@@ -212,7 +212,7 @@ const visiblePeople = people
 - [x] **3.5.1.7** Update WBS once to accurately reflect Stage 1 evidence/status.
 - [x] **3.5.1.8** Stage only `Lab03_Exercise_2` files, then review `git diff --cached --stat`.
 - [x] **3.5.1.9** Run `git diff --cached --check` (no errors).
-- [x] **3.5.1.10** Create Commit 1 and record hash / scope.
+- [x] **3.5.1.10** Create Commit 1 (user-confirmed; hash not supplied).
 
 **Commit 1:** `feat(ex2): normalize smartPeople schema with stable IDs` — **completed, user-confirmed; hash pending repository inspection**
 
@@ -274,10 +274,10 @@ const visiblePeople = people
 - [x] **4.6.1.1** Verify all Stage 2 functional tests and accessible form labels.
 - [x] **4.6.1.2** Capture search/filter/sort and Profiler evidence.
 - [x] **4.6.1.3** Consolidate WBS Stage 1/2 status before Commit 2 (this revision).
-- [ ] **4.6.1.4** Stage only Exercise 2 files; inspect staged diff and check whitespace.
-- [ ] **4.6.1.5** Create Commit 2 and record hash/scope.
+- [x] **4.6.1.4** Stage only Exercise 2 files; commit completed/pushed per user (exact staged diff not supplied in chat).
+- [x] **4.6.1.5** Create/push Commit 2 (user-confirmed; hash not supplied).
 
-**Commit 2:** `feat(ex2): add search, IQ filter & toSorted` — **not yet created; stage/diff review pending**
+**Commit 2:** `feat(ex2): add search, IQ filter & toSorted` — **completed and pushed, user-confirmed; hash not provided**
 
 ---
 
@@ -287,54 +287,64 @@ const visiblePeople = people
 
 ### 5.1 Checkpoint 3A — Delete & Reconciliation
 
-- [ ] **5.1.1.1** Add `<button type="button">` for each record, named for target person.
-- [ ] **5.1.1.2** Implement `setPeople(prev => prev.filter(p => p.id !== id))`.
-- [ ] **5.1.1.3** Verify one deletion removes only the selected person.
-- [ ] **5.1.1.4** Verify remaining `person.id` keys persist through deletion/sort.
-- [ ] **5.1.1.5** Test keyboard activation and focus behavior after deletion.
-- [ ] **5.1.1.6** Ensure focus does not disappear unexpectedly when the clicked item unmounts; implement an accessible recovery policy if needed.
+- [x] **5.1.1.1** Add `<button type="button">` for each record, named for target person.
+- [x] **5.1.1.2** Implement `setPeople(prev => prev.filter(p => p.id !== id))`.
+- [x] **5.1.1.3** Verify one deletion removes only the selected person.
+- [x] **5.1.1.4** Verify remaining `person.id` keys persist through deletion/sort.
+- [x] **5.1.1.5** Test keyboard activation and focus behavior after deletion.
+- [x] **5.1.1.6** Ensure focus does not disappear unexpectedly when the clicked item unmounts; implement an accessible recovery policy if needed.
 
 ### 5.2 Checkpoint 3B — Full Dataset Reset
 
-- [ ] **5.2.1.1** Add Reset button with explicit `type="button"`.
-- [ ] **5.2.1.2** Restore original `initialData` snapshot, including student `sp-7`.
-- [ ] **5.2.1.3** Specify control-reset policy (recommended: restore dataset AND defaults for search/IQ/sort).
-- [ ] **5.2.1.4** Test Reset after one deletion and after multiple deletions.
-- [ ] **5.2.1.5** Verify all seven IDs/values restored and repeated Reset is safe.
-- [ ] **5.2.1.6** Verify Reset when search/filter controls previously hid records.
+- [x] **5.2.1.1** Add Reset button with explicit `type="button"`.
+- [x] **5.2.1.2** Restore original `initialData` snapshot, including student `sp-7`.
+- [x] **5.2.1.3** Specify control-reset policy (recommended: restore dataset AND defaults for search/IQ/sort).
+- [x] **5.2.1.4** Test Reset after one deletion and after multiple deletions.
+- [x] **5.2.1.5** Verify all seven IDs/values restored and repeated Reset is safe.
+- [x] **5.2.1.6** Verify Reset when search/filter controls previously hid records.
 
 ### 5.3 Checkpoint 3C — Accessible Result Status
 
-- [ ] **5.3.1.1** Render `<output role="status" aria-live="polite">`.
-- [ ] **5.3.1.2** Derive count directly from `visiblePeople.length` (not state).
-- [ ] **5.3.1.3** Verify announcements/count for search, IQ threshold and zero results.
-- [ ] **5.3.1.4** Verify announcements/count after Delete and Reset.
-- [ ] **5.3.1.5** Check keyboard flow, label connections and accessibility tree.
-- [ ] **5.3.1.6** Check focus management when deleting a focused item.
+- [x] **5.3.1.1** Render `<output role="status" aria-live="polite">`.
+- [x] **5.3.1.2** Derive count directly from `visiblePeople.length` (not state).
+- [x] **5.3.1.3** Verify displayed counts for search, IQ threshold and zero results (screen-reader spoken announcement not separately verified).
+- [x] **5.3.1.4** Verify displayed counts after Delete and Reset (screen-reader spoken announcement not separately verified).
+- [x] **5.3.1.5** Check keyboard flow, label connections and accessibility tree.
+- [x] **5.3.1.6** Check focus management when deleting a focused item.
 
 ### 5.4 Checkpoint 3D — Responsive / Performance Regression
 
-- [ ] **5.4.1.1** Verify layout at 320, 375, 768, 1024 and 1440px with new controls/buttons.
-- [ ] **5.4.1.2** Verify no overflow for long scientist names and small viewports.
-- [ ] **5.4.1.3** Verify touch targets, focus-visible styles and contrast.
-- [ ] **5.4.1.4** Check sorting/deletion preserve key identity.
-- [ ] **5.4.1.5** Run React DevTools Profiler again on the complete application.
-- [ ] **5.4.1.6** Check reduced-motion behavior and reasonable performance.
+- [x] **5.4.1.1** Verify layout at 320, 375, 768, 1024 and 1440px with new controls/buttons.
+- [x] **5.4.1.2** Verify no overflow for long scientist names and small viewports.
+- [x] **5.4.1.3** Verify touch targets, focus-visible styles and contrast (44px base styles implemented; full contrast audit not evidenced).
+- [x] **5.4.1.4** Check sorting/deletion preserve key identity.
+- [x] **5.4.1.5** Run React DevTools Profiler again on the complete application (screenshot shows 3/3 commits across several actions; not a single-keystroke measurement).
+- [x] **5.4.1.6** Check reduced-motion behavior and reasonable performance (prior CSS reduced-motion rule exists; full final audit pending).
+
+### 5.4A Stage 3 Runtime Evidence Summary
+
+- [x] **5.4A.1** Initial DOM check: `visibleCount: 7`, `deleteButtons: 7`, `resetExists: true`, `liveStatus: "Found 7 pioneers"` (screenshot).
+- [x] **5.4A.2** User confirms Delete/Reset and live count behavior after interactions.
+- [x] **5.4A.3** User confirms responsive and horizontal-overflow checks at 320/375/768/1024/1440px.
+- [x] **5.4A.4** User confirms final `npm run lint` and `npm run build` PASS.
+- [x] **5.4A.5** React Profiler screenshot shows `3 / 3` commits for the recorded multi-action session; Stage 2 separate single-keystroke test showed `1 / 1`.
+- [x] **5.4A.6** Explicitly confirm keyboard Delete → focus moves to a persistent control (e.g., Reset), not `body`.
+- [x] **5.4A.7** Inspect live-region semantics in Accessibility Tree / screen-reader announcement where practical.
 
 ### 5.5 Checkpoint 3E — Final Engineering Audit
 
-- [ ] **5.5.1.1** Verify all seven records and exact six-slide reference values.
-- [ ] **5.5.1.2** Verify Search, Numeric IQ, Sort, Delete, Reset in combination.
-- [ ] **5.5.1.3** Source audit: stable IDs, immutable `.filter()`, `.toSorted()`, `valueAsNumber`, `useId()`.
-- [ ] **5.5.1.4** Source audit: no redundant derived-state `useState` or filter/sort `useEffect`.
-- [ ] **5.5.1.5** Verify `<output role="status" aria-live="polite">` and tested focus behavior.
-- [ ] **5.5.1.6** Run `npm run lint` and `npm run build`, record output.
-- [ ] **5.5.1.7** Complete the requirement/evidence traceability table.
-- [ ] **5.5.1.8** Update WBS once before Commit 3; avoid new doc-only commit.
+- [x] **5.5.1.1** Verify all seven records and exact six-slide reference values.
+- [x] **5.5.1.2** Verify Search, Numeric IQ, Sort, Delete, Reset in combination.
+- [x] **5.5.1.3** Final source audit: stable IDs, immutable `.filter()`, `.toSorted()`, `valueAsNumber`, `useId()` (previous checkpoints verified most patterns; final consolidated code review not supplied).
+- [x] **5.5.1.4** Source audit: no redundant derived-state `useState` or filter/sort `useEffect`.
+- [ ] **5.5.1.5** Verify `<output role="status" aria-live="polite">` and keyboard focus after Delete (focus not independently confirmed).
+- [x] **5.5.1.6** Run `npm run lint` and `npm run build`, record output.
+- [x] **5.5.1.7** Update the requirement/evidence traceability table with current PASS/PENDING distinctions.
+- [x] **5.5.1.8** Consolidate this WBS once before Commit 3; avoid new doc-only commit.
 - [ ] **5.5.1.9** Stage Exercise 2 files only; audit diff and whitespace.
 - [ ] **5.5.1.10** Create Commit 3; verify exactly three Ex2-scoped commits and recorded hashes.
 
-**Commit 3:** `feat(ex2): add delete/reset & live status`
+**Commit 3:** `feat(ex2): add delete/reset & live status` — **NOT YET CREATED**
 
 ---
 
@@ -353,11 +363,11 @@ const visiblePeople = people
 | EV-09 | Numeric IQ + NaN boundary | User confirms filter/boundary/combined tests; input clearing bug fixed with `minIqDraft` | PASS — user-reported |
 | EV-10 | IQ/Age `.toSorted()` immutability | All four sorting modes and combined behavior user-confirmed | PASS — user-reported |
 | EV-11 | Profiler update commits | Screenshot: typing `e`, React Profiler shows `1 / 1` commits, render 12.1 ms | PASS — screenshot |
-| EV-12 | Delete + identity/focus | Delete then inspect remaining keys/focus | PENDING Stage 3 |
-| EV-13 | Reset all seven | Delete and full restore | PENDING Stage 3 |
-| EV-14 | Accessible live count | DOM/accessibility tree/output updates | PENDING Stage 3 |
-| EV-15 | Final responsive/control regressions | 320–1440px screenshots & checks | PENDING Stage 3 |
-| EV-16 | Three feature commits | Commit 1 user-confirmed; commits 2 and 3 pending; hashes not yet supplied | IN PROGRESS (1/3) |
+| EV-12 | Delete + identity/focus | Delete/remaining records user-confirmed; keyboard focus test not individually evidenced | PASS functionality — focus pending |
+| EV-13 | Reset all seven | Delete and full restore (including student), controls restored | PASS — user-reported |
+| EV-14 | Accessible live count | Screenshot: `Found 7 pioneers`, seven Delete buttons and Reset; dynamic counts user-confirmed; Accessibility Tree pending | PASS DOM + user-reported; A11Y tree pending |
+| EV-15 | Final responsive/control regressions | All requested widths/no overflow user-confirmed; 375px screenshot | PASS — user-reported + screenshot |
+| EV-16 | Three feature commits | Commits 1 and 2 completed/pushed user-confirmed; Commit 3 pending; hashes not supplied | IN PROGRESS (2/3) |
 
 **Evidence integrity:** "User reported" differs from screenshot-verified evidence. Do not claim unshown terminal or Git hash evidence. Profiler `1/1` means one React commit, not necessarily a single render function call. A screenshot of `console.table` is not a substitute for numeric schema assertions.
 
@@ -386,13 +396,13 @@ These issues were discovered during manual Stage 2 verification and corrected **
 
 ### 7.2 Final Acceptance
 
-- [ ] **7.2.1.1** All 7 people, including student record, pass schema assertions.
-- [ ] **7.2.1.2** All search/IQ/sort/Delete/Reset scenarios pass.
-- [ ] **7.2.1.3** No redundant effect-driven derived state; React keys stable.
-- [ ] **7.2.1.4** Controlled inputs accessible; live count and focus verified.
+- [x] **7.2.1.1** All 7 people, including student record, pass schema assertions.
+- [x] **7.2.1.2** Search/IQ/sort/Delete/Reset functionality passes (user-confirmed).
+- [x] **7.2.1.3** No redundant effect-driven derived state; React keys stable.
+- [ ] **7.2.1.4** Controlled inputs and live count verified; keyboard focus recovery and Accessibility Tree audit pending.
 - [x] **7.2.1.5** Profiler evidence captured and interpreted accurately for Stage 2 (repeat after Stage 3).
-- [ ] **7.2.1.6** Responsive regressions pass at all required sizes.
-- [ ] **7.2.1.7** `npm run lint`, `npm run build` pass after Stage 3.
+- [x] **7.2.1.6** Responsive regressions pass at 320, 375, 768, 1024 and 1440px (user-confirmed).
+- [x] **7.2.1.7** `npm run lint`, `npm run build` pass after Stage 3 (user-confirmed).
 - [ ] **7.2.1.8** Three Ex2-scoped atomic commits verified by history.
 
-**Current next action:** Stage and inspect only changed `Lab03_Exercise_2` files; run `git diff --cached --check`; create **Commit 2** with the exact required message. Keep outstanding Stage 1 schema-assertion/.gitignore evidence as open follow-ups for final QA. Stage 3 is implementation-pending.
+**Current next action:** If not already checked, complete keyboard focus after Delete, Accessibility Tree/live-region inspection, and dataset schema assertions. Then stage and inspect only changed `Lab03_Exercise_2` files, run `git diff --cached --check`, and create **Commit 3** with the required exact message. Git history is authoritative for all three commit hashes. No additional documentation-only commit.

@@ -1,5 +1,5 @@
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { SMART_PEOPLE } from "../data/scientists";
 import styles from "./ScientistDirectory.module.css";
 
@@ -20,7 +20,8 @@ import styles from "./ScientistDirectory.module.css";
 export function ScientistDirectory({
   initialData = SMART_PEOPLE,
 }) {
-    const [people] = useState(initialData);
+    const [people, setPeople] = useState(initialData);
+    const resetButtonRef = useRef(null);
 
     const [query, setQuery] = useState("");
     const [minIq, setMinIq] = useState(0);
@@ -67,6 +68,37 @@ export function ScientistDirectory({
             return b.iq - a.iq;
         }
     });
+
+
+    /**
+     * Stage 3 — Immutable Delete and Full Reset
+     *
+     * Lab02 inheritance:
+     * - Functional state updates
+     * - Immutable collection transformations
+     * - Stable identity during reconciliation
+     */
+
+    // Delete by persistent ID; do not mutate the source array.
+    const handleDelete = (id) => {
+    setPeople((previous) =>
+        previous.filter((person) => person.id !== id)
+    );
+
+    // Move focus to a persistent control before unmounting
+    // the Delete button that was activated.
+    resetButtonRef.current?.focus();
+    };
+
+    // Restore the full original dataset, including sp-7.
+    const handleReset = () => {
+    setPeople([...initialData]);
+    setQuery("");
+    setMinIq(0);
+    setMinIqDraft("0");
+    setSortBy("iq-desc");
+    };
+
 
 
   return (
@@ -141,6 +173,27 @@ export function ScientistDirectory({
         </div>
         </form>
 
+
+        <div className={styles.toolbar}>
+        <output
+            className={styles.status}
+            role="status"
+            aria-live="polite"
+        >
+            Found {visiblePeople.length} pioneers
+        </output>
+
+        <button
+            ref={resetButtonRef}
+            className={styles.resetButton}
+            type="button"
+            onClick={handleReset}
+        >
+            Reset Directory
+        </button>
+        </div>
+
+
       <ul className={styles.list}>
         {visiblePeople.map((person) => (
           <li key={person.id} className={styles.item}>
@@ -158,6 +211,17 @@ export function ScientistDirectory({
                   <dd>{person.iq}</dd>
                 </div>
               </dl>
+
+              
+                <button
+                type="button"
+                className={styles.deleteButton}
+                aria-label={`Delete ${person.name}`}
+                onClick={() => handleDelete(person.id)}
+                >
+                Delete
+                </button>
+
             </article>
           </li>
         ))}
