@@ -5,8 +5,8 @@
 **Engineering standard:** `../PROJECT_RULES.md` (master; mobile-first)
 **Scope of inheritance:** Lab02 only (especially Lab02 Exercise 2)
 **Commit constraint:** Exactly three atomic commits for Exercise 2
-**Snapshot:** Stage 1 implementation tested; WBS reviewed **before Commit 1**. No commit claimed yet.
-**Checklist rule:** `[x]` means implemented/observed or source-reviewed as specified; `[ ]` means not verified or pending. Stage 2/3 items remain pending.
+**Snapshot:** Commit 1 completed (user-confirmed); Stage 2 checkpoints 2A–2E functionally verified; lint/build PASS. WBS consolidated **before Commit 2**.
+**Checklist rule:** `[x]` means implemented/verified by available evidence or user-reported checks; `[ ]` means unverified/pending. Stage 3 remains pending. No Git hash is invented.
 
 ---
 
@@ -50,9 +50,9 @@
 
 | Commit | Scope | Required exact message | Status |
 |---|---|---|---|
-| 1 | Schema, component, initial responsive UI, WBS and inheritance analysis | `feat(ex2): normalize smartPeople schema with stable IDs` | Not created |
-| 2 | Controlled search + numeric IQ + derived sorting | `feat(ex2): add search, IQ filter & toSorted` | Not created |
-| 3 | Delete/reset + accessible status + final QA | `feat(ex2): add delete/reset & live status` | Not created |
+| 1 | Schema, component, initial responsive UI, WBS and inheritance analysis | `feat(ex2): normalize smartPeople schema with stable IDs` | COMPLETED — user-confirmed; hash not provided |
+| 2 | Controlled search + numeric IQ + derived sorting | `feat(ex2): add search, IQ filter & toSorted` | READY FOR STAGING — not committed |
+| 3 | Delete/reset + accessible status + final QA | `feat(ex2): add delete/reset & live status` | NOT STARTED |
 
 **Git boundary rule:** Keep changes scoped to `Lab03_Exercise_2/`. Do not stage files from Lab02, Ex1, Ex3 or the parent `PROJECT_RULES.md`. Perform a consolidated WBS edit immediately before each allowed commit; no extra documentation-only commit.
 
@@ -93,11 +93,18 @@ if (!Object.is(previousValue, resolvedValue)) {
 const [people, setPeople] = useState(initialData);
 setPeople(prev => prev.filter(person => person.id !== targetId));
 ```
-**Derived data — extension (Stage 2 target, not yet implemented):**
+**Derived data — Stage 2 implemented and functionally tested (illustrative simplification):**
 ```jsx
 const visiblePeople = people
   .filter(p => p.name.toLowerCase().includes(query.trim().toLowerCase()) && p.iq >= minIq)
-  .toSorted((a, b) => sortBy === 'iq-desc' ? b.iq - a.iq : a.age - b.age);
+  .toSorted((a, b) => {
+    switch (sortBy) {
+      case 'iq-asc': return a.iq - b.iq;
+      case 'age-desc': return b.age - a.age;
+      case 'age-asc': return a.age - b.age;
+      default: return b.iq - a.iq;
+    }
+  });
 ```
 **Identity:** `<li key={person.id}>` preserves React item identity across reorder/removal; array index is not a stable key. **Events:** React controlled inputs replace the custom event-delegation hub; `useId()` associates `<label>` and `<input>`; numeric input is read through `valueAsNumber`.
 
@@ -112,9 +119,9 @@ const visiblePeople = people
 - [ ] **2.4.1.7** Complete separate source-level inspection of Lab02 Ex1 VNode implementation (supporting reference).
 - [ ] **2.4.1.8** Complete separate source-level inspection of Lab02 Ex3 React/Vite implementation (supporting reference).
 - [x] **2.4.1.9** Record legacy `smartPeople` source as unverified rather than claim direct source reuse.
-- [ ] **2.4.1.10** Verify final Lab03 implementation against all migrated patterns (Stages 2–3).
+- [ ] **2.4.1.10** Verify final Lab03 implementation against all migrated patterns (Stages 2–3); Stage 2 portion complete, Stage 3 pending.
 
-**Analysis status:** Primary Lab02 Ex2 source audit complete; supporting Ex1/Ex3 and final migration verification pending.
+**Analysis status:** Primary Lab02 Ex2 source audit complete; Stage 2 migration observed through search/filter/sort, with Stage 3 delete/reset and optional supporting Ex1/Ex3 source audits still pending.
 
 ---
 
@@ -131,14 +138,14 @@ const visiblePeople = people
 - [x] **3.1.1.3** Confirm React 19 and react-dom 19 (via npm inspection).
 - [x] **3.1.1.4** Confirm Vite project scripts/configuration.
 - [x] **3.1.1.5** Confirm master `PROJECT_RULES.md` scope; do not duplicate rules.
-- [ ] **3.1.1.6** Explicitly verify `.gitignore` excludes `node_modules` and `dist` using the actual file.
+- [ ] **3.1.1.6** Explicitly inspect `.gitignore` for `node_modules` and `dist` (not shown directly; neither appeared in staged file list).
 
 #### 3.1.2 Environment Quality Checks
 
 - [x] **3.1.2.1** Run development server and open the application in Chrome.
 - [x] **3.1.2.2** Verify current project launches without blocking error.
-- [ ] **3.1.2.3** Record a current `npm run lint` PASS before Commit 1.
-- [ ] **3.1.2.4** Record a current `npm run build` PASS before Commit 1.
+- [x] **3.1.2.3** Record a current `npm run lint` PASS before Commit 1.
+- [x] **3.1.2.4** Record a current `npm run build` PASS before Commit 1.
 - [ ] **3.1.2.5** Capture/save environment evidence in a durable location if required.
 
 ### 3.2 Checkpoint 1B — Lab02 Analysis
@@ -199,78 +206,78 @@ const visiblePeople = people
 - [x] **3.5.1.1** Basic seven-person rendering is verified.
 - [x] **3.5.1.2** Initial stable IDs, JSX list and 375px mobile view are verified.
 - [x] **3.5.1.3** Main inheritance analysis from Lab02 Ex2 is documented.
-- [ ] **3.5.1.4** Complete schema assertion suite (all PASS).
-- [ ] **3.5.1.5** Run final pre-commit lint and build and record PASS.
-- [ ] **3.5.1.6** Confirm `.gitignore` and clean staging scope.
-- [ ] **3.5.1.7** Update WBS once to accurately reflect Stage 1 evidence/status.
-- [ ] **3.5.1.8** Stage only `Lab03_Exercise_2` files, then review `git diff --cached --stat`.
-- [ ] **3.5.1.9** Run `git diff --cached --check` (no errors).
-- [ ] **3.5.1.10** Create Commit 1 and record hash / scope.
+- [ ] **3.5.1.4** Complete schema assertion suite (all PASS); terminal `console.table` showed seven records, but full assertions not shown.
+- [x] **3.5.1.5** Run final pre-commit lint and build and record PASS.
+- [x] **3.5.1.6** Staging scope checked (15 selected Ex2 files; unused assets unstaged). `.gitignore` content not independently inspected.
+- [x] **3.5.1.7** Update WBS once to accurately reflect Stage 1 evidence/status.
+- [x] **3.5.1.8** Stage only `Lab03_Exercise_2` files, then review `git diff --cached --stat`.
+- [x] **3.5.1.9** Run `git diff --cached --check` (no errors).
+- [x] **3.5.1.10** Create Commit 1 and record hash / scope.
 
-**Commit 1:** `feat(ex2): normalize smartPeople schema with stable IDs`
+**Commit 1:** `feat(ex2): normalize smartPeople schema with stable IDs` — **completed, user-confirmed; hash pending repository inspection**
 
 ---
 
 ## 4. Stage 2 — Controlled Search, Numeric IQ & Sorting
 
-**Stage outcome:** One-way data flow with four independent source states and a pure render-time derived pipeline. **Commit boundary: #2.**
+**Stage outcome:** One-way data flow with independent source state and pure render-time derived pipeline. A separate `minIqDraft` stores an editable numeric input string; `minIq` remains a number. **Commit boundary: #2.**
 
 ### 4.1 Checkpoint 2A — Form State & Accessibility
 
-- [ ] **4.1.1.1** Use independent state `people`, `query`, `minIq`, `sortBy`.
-- [ ] **4.1.1.2** Keep Hooks at component top-level and use controlled values.
-- [ ] **4.1.1.3** Create semantic `<form role="search">` and prevent submit reload.
-- [ ] **4.1.1.4** Generate IDs via React `useId()` and bind with `htmlFor`.
-- [ ] **4.1.1.5** Provide search, min IQ and sort controls with descriptive labels.
+- [x] **4.1.1.1** Use independent state `people`, `query`, `minIq`, `sortBy`.
+- [x] **4.1.1.2** Keep Hooks at component top-level and use controlled values.
+- [x] **4.1.1.3** Create semantic `<form role="search">` and prevent submit reload.
+- [x] **4.1.1.4** Generate IDs via React `useId()` and bind with `htmlFor`.
+- [x] **4.1.1.5** Provide search, min IQ and sort controls with descriptive labels.
 - [ ] **4.1.1.6** Verify keyboard focus and control accessibility.
 
 ### 4.2 Checkpoint 2B — Name Search
 
-- [ ] **4.2.1.1** Implement `query` string state and `onChange` handler.
-- [ ] **4.2.1.2** Use `trim().toLowerCase()` and case-insensitive `includes()`.
-- [ ] **4.2.1.3** Verify empty query displays all qualifying scientists.
-- [ ] **4.2.1.4** Verify partial, uppercase, mixed-case and whitespace-padded terms.
-- [ ] **4.2.1.5** Verify unmatched query yields zero visible results.
-- [ ] **4.2.1.6** Confirm search can be combined with IQ filter.
+- [x] **4.2.1.1** Implement `query` string state and `onChange` handler.
+- [x] **4.2.1.2** Use `trim().toLowerCase()` and case-insensitive `includes()`.
+- [x] **4.2.1.3** Verify empty query displays all qualifying scientists.
+- [ ] **4.2.1.4** Verify every edge case explicitly (partial, uppercase, mixed-case, whitespace-padded); broad feature PASS reported but individual cases not all evidenced.
+- [x] **4.2.1.5** Verify unmatched query yields zero visible results.
+- [x] **4.2.1.6** Confirm search can be combined with IQ filter.
 
 ### 4.3 Checkpoint 2C — Numeric Minimum IQ
 
-- [ ] **4.3.1.1** Implement `type="number"` controlled input (default 160 as slide reference).
-- [ ] **4.3.1.2** Read `event.target.valueAsNumber`, never compare string IQ thresholds.
-- [ ] **4.3.1.3** Handle NaN/empty numeric input deterministically.
-- [ ] **4.3.1.4** Use inclusive condition `person.iq >= minIq`.
-- [ ] **4.3.1.5** Test IQ boundary 190 (including Isaac Newton and James Maxwell).
-- [ ] **4.3.1.6** Verify raising/lowering threshold updates derived results correctly.
+- [x] **4.3.1.1** Implement `type="number"` controlled input (actual application default 0; slide sample uses 160).
+- [x] **4.3.1.2** Read `event.target.valueAsNumber`, never compare string IQ thresholds.
+- [x] **4.3.1.3** Fix clearing/retyping bug using editable `minIqDraft` (string) alongside numeric `minIq`; empty/NaN resolves to numeric 0.
+- [x] **4.3.1.4** Use inclusive condition `person.iq >= minIq`.
+- [x] **4.3.1.5** Test IQ boundary 190 (including Isaac Newton and James Maxwell).
+- [x] **4.3.1.6** Verify raising/lowering threshold updates derived results correctly.
 
 ### 4.4 Checkpoint 2D — Immutable Sort
 
-- [ ] **4.4.1.1** Add IQ descending sort (slide default `iq-desc`).
-- [ ] **4.4.1.2** Add Age descending sort (minimum contract).
-- [ ] **4.4.1.3** Optionally support IQ/age ascending for extensibility without changing defaults.
-- [ ] **4.4.1.4** Use ES2023 `.toSorted()` and a numeric comparator.
-- [ ] **4.4.1.5** Verify sorting does not mutate original `people` state.
-- [ ] **4.4.1.6** Verify equal IQs preserve stable identity; test all implemented sort modes.
+- [x] **4.4.1.1** Add IQ descending sort (slide default `iq-desc`).
+- [x] **4.4.1.2** Add Age descending sort (minimum contract).
+- [x] **4.4.1.3** Optionally support IQ/age ascending for extensibility without changing defaults.
+- [x] **4.4.1.4** Use ES2023 `.toSorted()` and a numeric comparator.
+- [x] **4.4.1.5** Verify sorting does not mutate original `people` state.
+- [x] **4.4.1.6** Verify equal IQs preserve stable identity; test all implemented sort modes.
 
 ### 4.5 Checkpoint 2E — Derived-State & Profiler Audit
 
-- [ ] **4.5.1.1** Compute `visiblePeople` during render: name → IQ → sort.
-- [ ] **4.5.1.2** Do not store `visiblePeople`, `filteredPeople`, `sortedPeople` in state.
-- [ ] **4.5.1.3** Do not call `useEffect` for search/filter/sort synchronization.
-- [ ] **4.5.1.4** Verify combined search/filter/sort output against expected data.
-- [ ] **4.5.1.5** Open React DevTools Profiler and capture a single-character input update.
-- [ ] **4.5.1.6** Distinguish StrictMode development double renders from actual update commits.
-- [ ] **4.5.1.7** Confirm no effect-driven second update commit; document measured result.
-- [ ] **4.5.1.8** Run lint/build after Stage 2 changes.
+- [x] **4.5.1.1** Compute `visiblePeople` during render: name → IQ → sort.
+- [x] **4.5.1.2** Do not store `visiblePeople`, `filteredPeople`, `sortedPeople` in state.
+- [x] **4.5.1.3** Do not call `useEffect` for search/filter/sort synchronization.
+- [x] **4.5.1.4** Verify combined search/filter/sort output against expected data.
+- [x] **4.5.1.5** Open React DevTools Profiler and capture a single-character input update.
+- [x] **4.5.1.6** Distinguish StrictMode development double renders from actual update commits.
+- [x] **4.5.1.7** Profiler screenshot shows **1/1 update commits** after typing `e` (render 12.1 ms); no effect-driven second commit observed. This does not prove one component function invocation in StrictMode.
+- [x] **4.5.1.8** Run lint/build after Stage 2 changes.
 
 ### 4.6 Stage 2 Quality Gate & Commit 2
 
-- [ ] **4.6.1.1** Verify all Stage 2 functional tests and accessible form labels.
-- [ ] **4.6.1.2** Capture search/filter/sort and Profiler evidence.
-- [ ] **4.6.1.3** Update WBS once before Commit 2.
+- [x] **4.6.1.1** Verify all Stage 2 functional tests and accessible form labels.
+- [x] **4.6.1.2** Capture search/filter/sort and Profiler evidence.
+- [x] **4.6.1.3** Consolidate WBS Stage 1/2 status before Commit 2 (this revision).
 - [ ] **4.6.1.4** Stage only Exercise 2 files; inspect staged diff and check whitespace.
 - [ ] **4.6.1.5** Create Commit 2 and record hash/scope.
 
-**Commit 2:** `feat(ex2): add search, IQ filter & toSorted`
+**Commit 2:** `feat(ex2): add search, IQ filter & toSorted` — **not yet created; stage/diff review pending**
 
 ---
 
@@ -340,19 +347,28 @@ const visiblePeople = people
 | EV-03 | 320/768/1024/1440 responsiveness | No overflow results for each viewport | PASS — user reported |
 | EV-04 | Stable JSX keys | `key={person.id}` inspection / no key warnings | PASS — user reported |
 | EV-05 | Dataset schema validator | All assertions true | PENDING evidence |
-| EV-06 | React 19 version, lint/build | Terminal package/build/lint outputs | PENDING final capture |
+| EV-06 | React 19 version, lint/build | React 19 environment from Stage 1; Stage 2 lint/build PASS user-confirmed | PASS — user-reported |
 | EV-07 | Lab02 Ex2 source inheritance | Source review + Section 2 matrix | PASS — analyzed |
-| EV-08 | Case-insensitive search | Empty/partial/mixed-case/unmatched input | PENDING Stage 2 |
-| EV-09 | Numeric IQ + NaN boundary | Threshold 190; combined filters | PENDING Stage 2 |
-| EV-10 | IQ/Age `.toSorted()` immutability | Sort results + source audit | PENDING Stage 2 |
-| EV-11 | Profiler update commits | React DevTools interaction recording | PENDING Stage 2 |
+| EV-08 | Case-insensitive search | Screenshot: empty → 7, einstein → 1, xyz123 → 0; remaining edge cases not individually evidenced | PASS basic — screenshot; edge tests pending |
+| EV-09 | Numeric IQ + NaN boundary | User confirms filter/boundary/combined tests; input clearing bug fixed with `minIqDraft` | PASS — user-reported |
+| EV-10 | IQ/Age `.toSorted()` immutability | All four sorting modes and combined behavior user-confirmed | PASS — user-reported |
+| EV-11 | Profiler update commits | Screenshot: typing `e`, React Profiler shows `1 / 1` commits, render 12.1 ms | PASS — screenshot |
 | EV-12 | Delete + identity/focus | Delete then inspect remaining keys/focus | PENDING Stage 3 |
 | EV-13 | Reset all seven | Delete and full restore | PENDING Stage 3 |
 | EV-14 | Accessible live count | DOM/accessibility tree/output updates | PENDING Stage 3 |
 | EV-15 | Final responsive/control regressions | 320–1440px screenshots & checks | PENDING Stage 3 |
-| EV-16 | Three feature commits | `git log --oneline -- Lab03_Exercise_2` | PENDING |
+| EV-16 | Three feature commits | Commit 1 user-confirmed; commits 2 and 3 pending; hashes not yet supplied | IN PROGRESS (1/3) |
 
-**Evidence integrity:** "User reported" differs from screenshot-verified evidence. Do not mark tests as independently observed unless their result was actually shown or run. A screenshot of `console.table` is not a substitute for numeric schema assertions.
+**Evidence integrity:** "User reported" differs from screenshot-verified evidence. Do not claim unshown terminal or Git hash evidence. Profiler `1/1` means one React commit, not necessarily a single render function call. A screenshot of `console.table` is not a substitute for numeric schema assertions.
+
+### 6.1 Stage 2 Bug Resolution Log
+
+| ID | Observed issue | Root cause | Fix / verification |
+|---|---|---|---|
+| BUG-2C-01 | Minimum IQ could not be cleared to retype | Controlled input converted empty string / `NaN` immediately back to `0` | `minIqDraft` holds editable text; `minIq` stays numeric for comparisons; user re-tested PASS |
+| BUG-2C-02 | Console showed `ReferenceError: minIq is not defined` during iteration | Filter referenced `minIq` before correct state declaration was restored | Restored numeric `minIq` state; user reports no further errors and tests PASS |
+
+These issues were discovered during manual Stage 2 verification and corrected **before Commit 2**. The log is engineering evidence, not a claim that the runtime was inspected by the author of this document.
 
 ---
 
@@ -374,9 +390,9 @@ const visiblePeople = people
 - [ ] **7.2.1.2** All search/IQ/sort/Delete/Reset scenarios pass.
 - [ ] **7.2.1.3** No redundant effect-driven derived state; React keys stable.
 - [ ] **7.2.1.4** Controlled inputs accessible; live count and focus verified.
-- [ ] **7.2.1.5** Profiler evidence captured and interpreted accurately.
+- [x] **7.2.1.5** Profiler evidence captured and interpreted accurately for Stage 2 (repeat after Stage 3).
 - [ ] **7.2.1.6** Responsive regressions pass at all required sizes.
 - [ ] **7.2.1.7** `npm run lint`, `npm run build` pass after Stage 3.
 - [ ] **7.2.1.8** Three Ex2-scoped atomic commits verified by history.
 
-**Current next action:** Complete Stage 1 outstanding checks (schema assertions, lint/build, `.gitignore`, staging review), then create **Commit 1**. Stages 2 and 3 remain implementation-pending.
+**Current next action:** Stage and inspect only changed `Lab03_Exercise_2` files; run `git diff --cached --check`; create **Commit 2** with the exact required message. Keep outstanding Stage 1 schema-assertion/.gitignore evidence as open follow-ups for final QA. Stage 3 is implementation-pending.
